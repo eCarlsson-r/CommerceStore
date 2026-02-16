@@ -1,4 +1,35 @@
+import { DataTable } from "@/components/shared/DataTable";
+import { BranchSchema } from "@/lib/schemas";
+import { useModel } from "@/hooks/useModel";
+import { z } from "zod";
+import Image from "next/image";
 export default function Branches() {
+  const { data } = useModel("branch");
+  const title = "Branch Gallery";
+  const columns = [
+    {
+      accessorKey: "name",
+      cell: ({ row }: { row: { original: z.infer<typeof BranchSchema> } }) => {
+        const record = row.original;
+        return (
+          <Image className="mini-img" src={record.path} alt={record.name} />
+        );
+      },
+    },
+    {
+      accessorKey: "address",
+      cell: ({ row }: { row: { original: z.infer<typeof BranchSchema> } }) => {
+        const record = row.original;
+        return (
+          <article>
+            <b>{record.name}</b>
+            <p>{record.address}</p>
+          </article>
+        );
+      },
+    },
+  ];
+
   return (
     <div id="branch-gallery" className="py-12">
       <div className="container mx-auto px-4">
@@ -15,26 +46,7 @@ export default function Branches() {
 
         <div className="w-full mb-4">
           <div className="overflow-x-auto">
-            <table
-              id="table-branch"
-              className="w-full text-left border-collapse"
-              data-show-header="false"
-            >
-              <thead>
-                <tr>
-                  <th
-                    className="w-full sm:w-1/3 px-4 py-2"
-                    data-field="branch-name"
-                    data-formatter="branchImageFormatter"
-                  ></th>
-                  <th
-                    className="w-full sm:w-2/3 px-4 py-2"
-                    data-field="branch-address"
-                    data-formatter="branchDetailsFormatter"
-                  ></th>
-                </tr>
-              </thead>
-            </table>
+            <DataTable title={title} columns={columns} data={data} />
           </div>
         </div>
       </div>
