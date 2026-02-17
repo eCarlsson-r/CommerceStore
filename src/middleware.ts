@@ -1,16 +1,42 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+const publicRoutes = [
+    '/',
+    '/login',
+    '/shop',
+    '/product',
+    '/cart',
+    '/about',
+    '/contact',
+    '/branches',
+    '/privacy',
+    '/terms',
+];
+
+function isPublicRoute(pathname: string) {
+    return publicRoutes.some(
+        (route) => pathname === route || pathname.startsWith(route + '/')
+    );
+}
+
 export function middleware(request: NextRequest) {
     const token = request.cookies.get('auth_token');
-    const isAuthPage = request.nextUrl.pathname.startsWith('/login');
+    const { pathname } = request.nextUrl;
+    const isAuthPage = pathname.startsWith('/login');
 
-    if (!token && !isAuthPage) {
-        return NextResponse.redirect(new URL('/login', request.url));
+    // Allow public routes without authentication
+    if (isPublicRoute(pathname)) {
+        // If logged in and visiting /login, redirect to account
+        if (token && isAuthPage) {
+            return NextResponse.redirect(new URL('/account', request.url));
+        }
+        return NextResponse.next();
     }
 
-    if (token && isAuthPage) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+    // Protected routes: redirect to login if not authenticated
+    if (!token) {
+        return NextResponse.redirect(new URL('/login', request.url));
     }
 
     return NextResponse.next();

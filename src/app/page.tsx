@@ -1,4 +1,87 @@
+"use client";
+import { DataTable } from "@/components/shared/DataTable";
+import Image from "next/image";
+import Sidebar from "@/components/sidebar";
+import { useEffect, useState } from "react";
+
 export default function Home() {
+  const [products, setProducts] = useState([]);
+  const [bestSeller, setBestSeller] = useState([]);
+  const [newArrival, setNewArrival] = useState([]);
+
+  const productView = ({ row }: any) => {
+    const categoryItem = (
+      <div className="single-products">
+        <div className="productinfo text-center" data-code={row.id}>
+          <Image src={row.image} alt={row.name} />
+          <h2>{row.price}</h2>
+          <p>{row.name}</p>
+          <a href="#" className="btn btn-default add-to-cart">
+            <i className="fa fa-shopping-cart"></i>
+            <span data-i18n="add-to-cart">Add to Cart</span>
+          </a>
+        </div>
+        <div className="product-overlay" data-code={row.id}>
+          <div className="overlay-content">
+            <h2>{row.price}</h2>
+            <p>{row.name}</p>
+            <a
+              href="javascript:void(0);"
+              className="btn btn-default add-to-cart"
+            >
+              <i className="fa fa-shopping-cart"></i>
+              <span data-i18n="add-to-cart">Add to Cart</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+    if (parseInt(row["stock-sale-discount"]) > 0) {
+      const discountBadge = (
+        <Image
+          className="new mini-discount"
+          data-discount={parseInt(row["stock-sale-discount"])}
+          src={`images/product-details/sale-${row["stock-sale-discount"]}.png`}
+          alt={`Discount for ${row["stock-sale-discount"]} %`}
+        />
+      );
+      return (
+        <article>
+          {categoryItem}
+          {discountBadge}
+        </article>
+      );
+    }
+    return categoryItem;
+  };
+
+  useEffect(() => {
+    const fetchBestSeller = async () => {
+      const response = await fetch("http://localhost:8000/api/best-seller");
+      const data = await response.json();
+      setBestSeller(data);
+    };
+    fetchBestSeller();
+  }, []);
+
+  useEffect(() => {
+    const fetchNewArrival = async () => {
+      const response = await fetch("http://localhost:8000/api/new-arrival");
+      const data = await response.json();
+      setNewArrival(data);
+    };
+    fetchNewArrival();
+  }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await fetch("http://localhost:8000/api/products");
+      const data = await response.json();
+      setProducts(data);
+    };
+    fetchProducts();
+  }, []);
+
   return (
     <div>
       <section id="slider">
@@ -35,95 +118,49 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap -mx-4">
             <div className="w-full sm:w-1/4 px-4">
-              <div className="left-sidebar">
-                <h2
-                  className="text-primary font-roboto text-lg font-bold text-center uppercase mb-[30px] relative"
-                  data-i18n="category"
-                >
-                  Category
-                </h2>
-                <div
-                  className="panel-group category-products categorySelector submenu mb-[35px] border border-border-light pb-5 pt-[15px]"
-                  id="accordian"
-                ></div>
-                <div className="price-range"></div>
-              </div>
+              <Sidebar />
             </div>
 
-            <div className="w-full sm:w-3/4 px-4 padding-right">
-              <div id="best_seller" className="features_items overflow-hidden">
-                <h2
-                  className="title text-center text-primary font-roboto text-lg font-bold uppercase mb-[30px] relative"
-                  data-i18n="best_seller"
-                >
-                  Best Seller
-                </h2>
-                <table
-                  id="table-bestseller"
-                  data-classes="table table-borderless"
-                  data-show-header="false"
-                  data-row-style="cardFormatter"
-                >
-                  <thead>
-                    <tr>
-                      <th
-                        data-field="product-code"
-                        data-formatter="categoryFormatter"
-                        data-events="categoryActionHandler"
-                      >
-                        Kategori
-                      </th>
-                    </tr>
-                  </thead>
-                </table>
+            {bestSeller.length > 0 && newArrival.length > 0 ? (
+              <div className="w-full sm:w-3/4 px-4 padding-right">
+                {bestSeller.length > 0 && (
+                  <DataTable
+                    title="Best Seller"
+                    columns={[
+                      {
+                        field: "name",
+                        cell: productView,
+                      },
+                    ]}
+                    data={bestSeller}
+                  />
+                )}
+                {newArrival.length > 0 && (
+                  <DataTable
+                    title="New Arrival"
+                    columns={[
+                      {
+                        field: "name",
+                        cell: productView,
+                      },
+                    ]}
+                    data={newArrival}
+                  />
+                )}
               </div>
-              <div id="new_arrival" className="features_items overflow-hidden">
-                <h2
-                  className="title text-center text-primary font-roboto text-lg font-bold uppercase mb-[30px] relative"
-                  data-i18n="new_arrival"
-                >
-                  New Arrival
-                </h2>
-                <table
-                  id="table-newarrival"
-                  data-classes="table table-borderless"
-                  data-show-header="false"
-                  data-row-style="cardFormatter"
-                >
-                  <thead>
-                    <tr>
-                      <th
-                        data-field="product-code"
-                        data-formatter="categoryFormatter"
-                        data-events="categoryActionHandler"
-                      >
-                        Kategori
-                      </th>
-                    </tr>
-                  </thead>
-                </table>
+            ) : (
+              <div className="w-full sm:w-3/4 px-4 padding-right">
+                <DataTable
+                  columns={[
+                    {
+                      field: "name",
+                      cell: productView,
+                    },
+                  ]}
+                  data={products}
+                />
               </div>
-              <div id="all_products" className="features_items overflow-hidden">
-                <table
-                  id="table-product"
-                  data-classes="table table-borderless"
-                  data-show-header="false"
-                  data-row-style="cardFormatter"
-                >
-                  <thead>
-                    <tr>
-                      <th
-                        data-field="product-code"
-                        data-formatter="categoryFormatter"
-                        data-events="categoryActionHandler"
-                      >
-                        Kategori
-                      </th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

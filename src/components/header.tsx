@@ -1,7 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
-  //const category = ;
   return (
     <header id="header">
       <div className="header_top bg-bg-light py-2">
@@ -19,12 +19,12 @@ export default function Header() {
                     </a>
                   </li>
                   <li>
-                    <a
+                    <Link
                       href="#"
                       className="hover:text-primary flex items-center"
                     >
                       <i className="fa fa-envelope mr-2"></i> info@domain.com
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -89,58 +89,58 @@ export default function Header() {
           <div className="flex flex-wrap -mx-4 items-center">
             <div className="w-full md:w-1/3 px-4">
               <div className="logo">
-                <a href="/">
+                <Link href="/">
                   <Image
-                    src="/logo.png"
+                    src="/images/logo.png"
                     alt="Logo for Carlsson Digital Commerce."
                     width={139}
                     height={39}
                   />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="w-full md:w-2/3 px-4">
               <div className="flex justify-end shop-menu">
                 <ul className="flex list-none p-0 m-0 space-x-6">
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      href="/account"
                       className="text-text-main hover:text-primary flex items-center bg-white"
                     >
                       <i className="fa fa-user mr-1"></i> Account
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      href="/wishlist"
                       className="text-text-main hover:text-primary flex items-center bg-white"
                     >
                       <i className="fa fa-star mr-1"></i> Wishlist
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="checkout.html"
+                    <Link
+                      href="/checkout"
                       className="text-text-main hover:text-primary flex items-center bg-white"
                     >
                       <i className="fa fa-crosshairs mr-1"></i> Checkout
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="cart.html"
+                    <Link
+                      href="/cart"
                       className="text-text-main hover:text-primary flex items-center bg-white"
                     >
                       <i className="fa fa-shopping-cart mr-1"></i> Cart
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="login.html"
+                    <Link
+                      href="/login"
                       className="text-text-main hover:text-primary flex items-center bg-white"
                     >
                       <i className="fa fa-lock mr-1"></i> Login
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -169,12 +169,12 @@ export default function Header() {
               <div className="mainmenu">
                 <ul className="flex list-none p-0 m-0 space-x-8">
                   <li>
-                    <a
+                    <Link
                       href="/"
                       className="text-text-main text-[17px] font-light hover:text-primary active:text-primary"
                     >
                       Home
-                    </a>
+                    </Link>
                   </li>
                   <li className="relative group">
                     <a
