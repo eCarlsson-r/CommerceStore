@@ -3,13 +3,13 @@ export default function About() {
     <div id="aboutUs" className="py-12">
       <div className="container mx-auto px-4">
         <h2
-          className="text-2xl font-bold text-primary mb-6 uppercase font-roboto"
+          className="text-2xl font-bold text-primary mb-6 uppercase"
           data-i18n="about-us"
         >
           about-us
         </h2>
         <p
-          className="mb-4 text-text-main leading-relaxed font-roboto font-light"
+          className="mb-4 text-text-main leading-relaxed font-light"
           data-i18n="brief-history"
         >
           brief-history

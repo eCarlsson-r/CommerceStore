@@ -8,29 +8,38 @@ const api = axios.create({
         "Content-Type": "application/json",
         "Accept": "application/json",
     },
-    withCredentials: true, // Required if using Laravel Sanctum
+    withCredentials: true, 
 });
 
-// Request Interceptor: Automatically attach the token
 api.interceptors.request.use((config) => {
-    const token = Cookies.get("auth_token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    // Check if we are in the browser before using js-cookie
+    if (typeof window !== "undefined") {
+        const token = Cookies.get("auth_token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
     }
     return config;
 });
 
-// Response Interceptor: Global Error Handling
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        const isServer = typeof window === "undefined";
+        const message = error.response?.data?.message || error.message || "An error occurred";
+
         if (error.response?.status === 401) {
-            // Session expired: Clear local data and redirect
-            Cookies.remove("auth_token");
-            window.location.href = "/login";
+            if (!isServer) {
+                Cookies.remove("auth_token");
+                window.location.href = "/login";
+            }
         } else {
-            const message = error.response?.data?.message || error.message || "An unexpected error occurred";
-            toast.error(message);
+            // Only show toasts if we are in the browser
+            if (!isServer) {
+                toast.error(message);
+            } else {
+                console.error("Server-side API Error:", message);
+            }
         }
         return Promise.reject(error);
     }

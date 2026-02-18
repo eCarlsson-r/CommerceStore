@@ -16,7 +16,7 @@ export default function Orders() {
           </ol>
         </div>
         <h1
-          className="text-2xl font-bold text-primary mb-8 font-roboto"
+          className="text-2xl font-bold text-primary mb-8"
           data-i18n="order-status"
         >
           Order Status
@@ -33,7 +33,7 @@ export default function Orders() {
             data-query-params="getOrderStatus"
             data-response-handler="showOrderStatus"
           >
-            <thead className="bg-primary text-white font-roboto">
+            <thead className="bg-primary text-white">
               <tr>
                 <th
                   data-field="sales-date"

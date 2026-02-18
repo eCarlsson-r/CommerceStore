@@ -34,14 +34,14 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
-    authenticate("/login", new FormData(e.currentTarget));
+    await authenticate("/login", new FormData(e.currentTarget));
   };
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    authenticate("/register", new FormData(e.currentTarget));
+    await authenticate("/register", new FormData(e.currentTarget));
   };
 
   return (
@@ -60,7 +60,7 @@ export default function Login() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
-              name="email"
+              name="username"
               className="space-y-2"
               required
               type="email"

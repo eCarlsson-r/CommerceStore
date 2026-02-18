@@ -5,7 +5,7 @@ export default function Contact() {
         <div className="flex flex-wrap -mx-4 mb-10">
           <div className="w-full px-4">
             <h2
-              className="text-3xl font-bold text-center text-text-dark uppercase mb-4 font-roboto"
+              className="text-3xl font-bold text-center text-text-dark uppercase mb-4"
               data-i18n="contact-us"
             >
               Contact Us
@@ -16,7 +16,7 @@ export default function Contact() {
           <div className="w-full sm:w-2/3 px-4">
             <div className="mb-8">
               <h2
-                className="text-2xl font-bold text-center text-primary uppercase mb-8 font-roboto"
+                className="text-2xl font-bold text-center text-primary uppercase mb-8"
                 data-i18n="get-in-touch"
               >
                 Get In Touch
@@ -72,7 +72,7 @@ export default function Contact() {
                     type="submit"
                     name="submit"
                     id="contact-us-btn"
-                    className="bg-primary text-white px-10 py-3 rounded-none hover:bg-primary/90 transition-colors cursor-pointer float-right uppercase shadow font-roboto"
+                    className="bg-primary text-white px-10 py-3 rounded-none hover:bg-primary/90 transition-colors cursor-pointer float-right uppercase shadow"
                     data-i18n="[value]submit-btn"
                     value="Submit"
                   />
@@ -84,11 +84,11 @@ export default function Contact() {
             <div className="contact-info">
               <h2
                 data-i18n="contact-info"
-                className="text-2xl font-bold text-center text-primary uppercase mb-8 font-roboto"
+                className="text-2xl font-bold text-center text-primary uppercase mb-8"
               >
                 Contact Info
               </h2>
-              <address className="not-italic text-text-main space-y-2 mb-8 font-roboto font-light">
+              <address className="not-italic text-text-main space-y-2 mb-8 font-light">
                 <p>E-Shopper Inc.</p>
                 <p>935 W. Webster Ave New Streets Chicago, IL 60614, NY</p>
                 <p>Newyork USA</p>
@@ -98,7 +98,7 @@ export default function Contact() {
               </address>
               <div className="social-networks">
                 <h2
-                  className="text-2xl font-bold text-center text-primary uppercase mb-6 font-roboto"
+                  className="text-2xl font-bold text-center text-primary uppercase mb-6"
                   data-i18n="social-networks"
                 >
                   Social Networking

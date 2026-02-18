@@ -35,6 +35,7 @@ export const CartSchema = z.object({
 export const CategorySchema = z.object({
   id: z.coerce.number().nullable().optional(),
   name: z.string(),
+  slug: z.string(),
   description: z.string().nullable().optional(),
   created_at: z.string().nullable().optional(),
   updated_at: z.string().nullable().optional(),

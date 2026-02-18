@@ -140,3 +140,17 @@ export type UserWithRelations = User & {
   employee?: Employee | null;
   customer?: Customer | null;
 };
+
+export type ProductCard = {
+  'id' : number,
+  'name' : string,
+  'price' : number,
+  'image' : string,
+  'quantity' : number,
+  'discount' : number,
+  'since_date' : string,
+  'products_sold' : number,
+  'number_of_sales' : number,
+  'media'?: Media[];
+  'category': Category;
+}

@@ -5,6 +5,8 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import QueryProvider from "@/providers/query-provider";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/hooks/useAuth";
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,10 +34,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
-          <Header />
-          {children}
-          <Footer />
-          <Toaster position="top-right" richColors />
+          <AuthProvider>
+            <CartProvider>
+              <Header />
+              <main className="min-h-screen container mx-auto px-4">
+                {children}
+              </main>
+              <Footer />
+              <Toaster position="top-right" richColors />
+            </CartProvider>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

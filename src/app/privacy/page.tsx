@@ -3,19 +3,19 @@ export default function Privacy() {
     <div id="privacyPolicy" className="py-12">
       <div className="container mx-auto px-4">
         <h2
-          className="text-2xl font-bold text-primary mb-6 uppercase font-roboto"
+          className="text-2xl font-bold text-primary mb-6 uppercase"
           data-i18n="privacy-policy"
         >
           privacy-policy
         </h2>
         <p
-          className="mb-4 text-text-main leading-relaxed font-roboto font-light"
+          className="mb-4 text-text-main leading-relaxed font-light"
           data-i18n="privacy-policy-desc"
         >
           privacy-policy-desc
         </p>
         <h3
-          className="text-xl font-bold text-text-dark mb-4 mt-6 uppercase font-roboto"
+          className="text-xl font-bold text-text-dark mb-4 mt-6 uppercase"
           data-i18n="collect-personal-information"
         >
           collect-personal-information
@@ -32,7 +32,7 @@ export default function Privacy() {
         >
           collect-personal-information-p2
         </p>
-        <ul className="list-disc pl-6 mb-4 text-text-main font-roboto font-light">
+        <ul className="list-disc pl-6 mb-4 text-text-main font-light">
           <li className="mb-2" data-i18n="collect-personal-information-p2b1">
             collect-personal-information-p2b1
           </li>
@@ -109,7 +109,7 @@ export default function Privacy() {
         <p className="mb-4 text-gray-600 leading-relaxed">
           <span data-i18n="contact-us-desc">contact-us-desc</span>{" "}
         </p>
-        <address className="not-italic text-text-main font-roboto font-light">
+        <address className="not-italic text-text-main font-light">
           Sun Plaza Level 2 Zone C No. 19, Jl. H. Zainul Arifin No. 7, Medan,
           Sumatera Utara, 20152, Indonesia
         </address>

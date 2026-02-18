@@ -27,7 +27,7 @@ export default function OrderDetail() {
           </ol>
         </div>
         <h2
-          className="text-2xl font-bold text-primary mb-8 font-roboto"
+          className="text-2xl font-bold text-primary mb-8"
           data-i18n="order-details"
         >
           Order Details
@@ -36,7 +36,7 @@ export default function OrderDetail() {
         <div className="flex flex-wrap -mx-4 mb-8">
           <div className="w-full sm:w-1/2 px-4 mb-4">
             <div className="flex">
-              <div className="w-5/12 sm:w-1/3 pr-2 font-bold text-text-dark font-roboto">
+              <div className="w-5/12 sm:w-1/3 pr-2 font-bold text-text-dark">
                 <p>
                   <b data-i18n="order-id">Order ID</b> :{" "}
                 </p>
@@ -87,7 +87,7 @@ export default function OrderDetail() {
               data-query-params="getOrderRecord"
               data-response-handler="showOrderRecord"
             >
-              <thead className="bg-primary text-white font-roboto">
+              <thead className="bg-primary text-white">
                 <tr>
                   <th
                     data-field="product"
@@ -112,7 +112,7 @@ export default function OrderDetail() {
                 </tr>
               </thead>
               <tbody></tbody>
-              <tfoot className="bg-bg-light font-bold text-text-dark font-roboto">
+              <tfoot className="bg-bg-light font-bold text-text-dark">
                 <tr>
                   <td colSpan={2} className="p-3"></td>
                   <td className="p-3 text-right">
@@ -159,7 +159,7 @@ export default function OrderDetail() {
               data-query-params="getOrderStatusRecords"
               data-response-handler="showOrderStatusRecords"
             >
-              <thead className="bg-primary text-white font-roboto">
+              <thead className="bg-primary text-white">
                 <tr>
                   <th
                     data-field="update-date"

@@ -1,86 +1,66 @@
-import Image from "next/image";
+// app/product/[id]/page.tsx
+import api from "@/lib/api";
+import { ProductCard } from "@/lib/types"; // Your type definition
+import { ImageGallery } from "@/components/product/ImageGallery";
+import { StockAvailability } from "@/components/product/StockAvailability";
+import { Heart } from "lucide-react";
 
-export default function ProductDetail() {
+export default async function ProductPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  // Fetch product detail + branch stock levels
+  const response = await api.get(`/product/${params.id}`);
+  const product: ProductCard = response.data.product;
+  const branchStocks = response.data.stocks; // Array of { branch_name, quantity }
+
   return (
-    <div id="productDetail" className="py-12">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-wrap -mx-4">
-          <div className="w-full sm:w-1/4 px-4">
-            <div className="mb-8">
-              <h2
-                className="text-xl font-bold mb-4 text-primary uppercase font-roboto"
-                data-i18n="category"
-              >
-                Category
-              </h2>
-              <div
-                className="space-y-2 border border-gray-200 rounded p-4"
-                id="accordian"
-              ></div>
-              <div className="price-range mt-8"></div>
+    <div className="container mx-auto px-4 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Left: Professional Gallery using your media[] */}
+        <ImageGallery items={product.media || []} mainImage={product.image} />
+
+        {/* Right: Product Info & Actions */}
+        <div className="space-y-8">
+          <div>
+            <p className="text-xs font-black text-primary uppercase tracking-widest mb-2">
+              {product.category.name}
+            </p>
+            <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter italic">
+              {product.name}
+            </h1>
+            <div className="flex items-center gap-4 mt-4">
+              <span className="text-3xl font-black text-gray-900">
+                Rp {product.price.toLocaleString()}
+              </span>
+              {product.discount > 0 && (
+                <span className="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-md">
+                  {product.discount}% OFF
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="w-full sm:w-3/4 px-4">
-            <div className="flex flex-wrap -mx-4 mb-12 product-details">
-              {/*product-details*/}
-              <div className="w-full sm:w-5/12 px-4">
-                <div className="border border-gray-200 p-2">
-                  <Image
-                    id="productImage"
-                    src=""
-                    alt=""
-                    className="w-full h-auto"
-                  />
-                </div>
-              </div>
-              <div className="w-full sm:w-7/12 px-4">
-                <div className="product-information border border-gray-200 p-6 pb-12 mb-8"></div>
-              </div>
-            </div>
-            {/*/product-details*/}
-
-            <div className="category-tab shop-details-tab mt-12">
-              {/*category-tab*/}
-              <div className="w-full mb-6">
-                <ul className="flex border-b border-border-light bg-bg-light">
-                  <li className="mr-1">
-                    <a
-                      href="#description"
-                      className="inline-block py-3 px-6 text-white bg-primary font-medium uppercase font-roboto"
-                      data-toggle="tab"
-                      data-i18n="product-description"
-                    >
-                      Product Description
-                    </a>
-                  </li>
-                  {/*li><a href="#product-tag" data-toggle="tab" data-i18n="product-tags" className="inline-block py-3 px-6 text-text-main hover:text-primary font-medium uppercase font-roboto">Product Tags</a></li*/}
-                  <li>
-                    <a
-                      href="#product-reviews"
-                      data-toggle="tab"
-                      data-i18n="review"
-                      className="inline-block py-3 px-6 text-text-main hover:text-primary font-medium uppercase font-roboto"
-                    >
-                      Reviews
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="tab-content border border-gray-200 p-6">
-                <div className="tab-pane fade active in block" id="description">
-                  <div className="w-full" id="product-description"></div>
-                </div>
-                {/*div className="tab-pane fade hidden" id="product-tag" ></div*/}
-
-                <div
-                  className="tab-pane fade hidden"
-                  id="product-reviews"
-                ></div>
-              </div>
-            </div>
-            {/*/category-tab*/}
+          <div className="border-t border-b border-gray-100 py-6">
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Premium quality jewelry from Republican Retail. Handcrafted
+              excellence available across our 11 branches.
+            </p>
           </div>
+
+          {/* Call to Action */}
+          <div className="flex gap-4">
+            <button className="flex-1 bg-gray-900 text-white py-5 rounded-2xl font-black uppercase text-xs shadow-2xl hover:bg-primary transition-all">
+              Add to Shopping Bag
+            </button>
+            <button className="p-5 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+              <Heart className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Branch Availability Section */}
+          <StockAvailability stocks={branchStocks} />
         </div>
       </div>
     </div>

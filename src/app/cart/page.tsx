@@ -80,7 +80,7 @@ export default function CartPage() {
               data-query-params="getCartItems"
               data-response-handler="showCartItems"
             >
-              <thead className="bg-primary text-white font-roboto font-bold">
+              <thead className="bg-primary text-white font-bold">
                 <tr className="h-[51px]">
                   <th
                     data-field="product"
@@ -132,10 +132,7 @@ export default function CartPage() {
                       />
                       <div className="cart_description">
                         <h4 className="m-0">
-                          <a
-                            href=""
-                            className="text-text-dark font-roboto text-xl"
-                          >
+                          <a href="" className="text-text-dark text-xl">
                             {item.title}
                           </a>
                         </h4>
@@ -156,7 +153,7 @@ export default function CartPage() {
                           <PlusCircle size={16} className="inline" />
                         </button>
                         <input
-                          className="cart_quantity_input text-text-main text-base text-center w-[35px] border-none font-roboto"
+                          className="cart_quantity_input text-text-main text-base text-center w-[35px] border-none"
                           type="text"
                           name="quantity"
                           value={item.amount}
@@ -215,7 +212,7 @@ export default function CartPage() {
                 </ul>
                 <button
                   id="check_out_btn"
-                  className="btn btn-default check_out bg-primary text-white border-none rounded-none px-4 py-1.5 ml-10 hover:bg-primary/90 font-roboto"
+                  className="btn btn-default check_out bg-primary text-white border-none rounded-none px-4 py-1.5 ml-10 hover:bg-primary/90"
                   type="button"
                   data-i18n="checkout"
                 >

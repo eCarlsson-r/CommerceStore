@@ -36,7 +36,7 @@ export default function Branches() {
         <div className="flex flex-wrap -mx-4 mb-4">
           <div className="w-full px-4">
             <h2
-              className="text-2xl font-bold text-center text-primary uppercase mb-8 font-roboto"
+              className="text-2xl font-bold text-center text-primary uppercase mb-8"
               data-i18n="branch-gallery"
             >
               Branch Gallery

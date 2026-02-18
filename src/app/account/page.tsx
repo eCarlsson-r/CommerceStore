@@ -18,7 +18,7 @@ export default function Account() {
             <div>
               <a
                 id="update-details"
-                className="bg-primary text-white px-4 py-2 rounded-none hover:bg-primary/90 transition-colors cursor-pointer font-roboto"
+                className="bg-primary text-white px-4 py-2 rounded-none hover:bg-primary/90 transition-colors cursor-pointer"
                 data-i18n="update-details"
                 href="#"
               >
@@ -32,7 +32,7 @@ export default function Account() {
         <form id="customer-details">
           <div className="mb-8">
             <h2
-              className="text-xl font-bold text-primary mb-4 uppercase font-roboto"
+              className="text-xl font-bold text-primary mb-4 uppercase"
               data-i18n="sign-in-details"
             >
               Sign-in Details
@@ -64,7 +64,7 @@ export default function Account() {
 
           <div className="mb-8">
             <h2
-              className="text-xl font-bold text-primary mb-4 uppercase font-roboto"
+              className="text-xl font-bold text-primary mb-4 uppercase"
               data-i18n="personal-details"
             >
               Personal Details
@@ -113,7 +113,7 @@ export default function Account() {
 
           <div className="mb-8">
             <h2
-              className="text-xl font-bold text-primary mb-4 uppercase font-roboto"
+              className="text-xl font-bold text-primary mb-4 uppercase"
               data-i18n="billing-address"
             >
               Billing Address

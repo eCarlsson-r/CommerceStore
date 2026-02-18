@@ -3,19 +3,19 @@ export default function Terms() {
     <div id="termsAndConditions" className="py-12">
       <div className="container mx-auto px-4">
         <h2
-          className="text-2xl font-bold text-primary mb-6 uppercase font-roboto"
+          className="text-2xl font-bold text-primary mb-6 uppercase"
           data-i18n="terms-of-service"
         >
           terms-of-service
         </h2>
         <h3
-          className="text-xl font-bold text-text-dark mb-4 mt-6 uppercase font-roboto"
+          className="text-xl font-bold text-text-dark mb-4 mt-6 uppercase"
           data-i18n="overview"
         >
           overview
         </h3>
         <p
-          className="mb-4 text-text-main leading-relaxed font-roboto font-light"
+          className="mb-4 text-text-main leading-relaxed font-light"
           data-i18n="tnc-overview-p1"
         >
           tnc-overview-p1

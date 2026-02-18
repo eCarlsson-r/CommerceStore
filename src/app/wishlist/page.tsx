@@ -25,7 +25,7 @@ export default function Wishlist() {
               data-query-params="getWishlistItems"
               data-response-handler="showWishlistItems"
             >
-              <thead className="bg-primary text-white font-roboto">
+              <thead className="bg-primary text-white">
                 <tr>
                   <th
                     data-formatter="cart_product"

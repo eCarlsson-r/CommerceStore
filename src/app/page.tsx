@@ -1,169 +1,47 @@
-"use client";
-import { DataTable } from "@/components/shared/DataTable";
-import Image from "next/image";
-import Sidebar from "@/components/sidebar";
-import { useEffect, useState } from "react";
+import Hero from "@/components/Hero";
+import Sidebar from "@/components/Sidebar";
+import { ProductGrid } from "@/components/ecommerce/ProductGrid";
+import { getBanners, getCategories, getProducts } from "@/lib/data-fetchers";
 
-export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [bestSeller, setBestSeller] = useState([]);
-  const [newArrival, setNewArrival] = useState([]);
+export default async function HomePage() {
+  // We fetch these in parallel for speed
+  const [banners, categories, bestSellers, newArrivals] = await Promise.all([
+    getBanners(),
+    getCategories(),
+    getProducts({ filter: "best-seller", limit: 4 }),
+    getProducts({ filter: "new-arrival", limit: 8 }),
+  ]);
 
-  const productView = ({ row }: any) => {
-    const categoryItem = (
-      <div className="single-products">
-        <div className="productinfo text-center" data-code={row.id}>
-          <Image src={row.image} alt={row.name} />
-          <h2>{row.price}</h2>
-          <p>{row.name}</p>
-          <a href="#" className="btn btn-default add-to-cart">
-            <i className="fa fa-shopping-cart"></i>
-            <span data-i18n="add-to-cart">Add to Cart</span>
-          </a>
-        </div>
-        <div className="product-overlay" data-code={row.id}>
-          <div className="overlay-content">
-            <h2>{row.price}</h2>
-            <p>{row.name}</p>
-            <a
-              href="javascript:void(0);"
-              className="btn btn-default add-to-cart"
-            >
-              <i className="fa fa-shopping-cart"></i>
-              <span data-i18n="add-to-cart">Add to Cart</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-    if (parseInt(row["stock-sale-discount"]) > 0) {
-      const discountBadge = (
-        <Image
-          className="new mini-discount"
-          data-discount={parseInt(row["stock-sale-discount"])}
-          src={`images/product-details/sale-${row["stock-sale-discount"]}.png`}
-          alt={`Discount for ${row["stock-sale-discount"]} %`}
-        />
-      );
-      return (
-        <article>
-          {categoryItem}
-          {discountBadge}
-        </article>
-      );
-    }
-    return categoryItem;
+  const priceBounds = {
+    min: bestSellers.min_price,
+    max: bestSellers.max_price,
   };
 
-  useEffect(() => {
-    const fetchBestSeller = async () => {
-      const response = await fetch("http://localhost:8000/api/best-seller");
-      const data = await response.json();
-      setBestSeller(data);
-    };
-    fetchBestSeller();
-  }, []);
-
-  useEffect(() => {
-    const fetchNewArrival = async () => {
-      const response = await fetch("http://localhost:8000/api/new-arrival");
-      const data = await response.json();
-      setNewArrival(data);
-    };
-    fetchNewArrival();
-  }, []);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await fetch("http://localhost:8000/api/products");
-      const data = await response.json();
-      setProducts(data);
-    };
-    fetchProducts();
-  }, []);
-
   return (
-    <div>
-      <section id="slider">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap -mx-4">
-            <div className="w-full px-4">
-              <div id="slider-carousel" className="carousel slide">
-                <ol
-                  className="carousel-indicators"
-                  id="promotion-indicator"
-                ></ol>
-                <div className="carousel-inner" id="promotion-content"></div>
-                <a
-                  href="#slider-carousel"
-                  className="left control-carousel hidden-xs absolute top-1/2 text-[60px] text-[#C2C2C1] hover:text-primary"
-                  data-slide="prev"
-                >
-                  <i className="fa fa-angle-left"></i>
-                </a>
-                <a
-                  href="#slider-carousel"
-                  className="right control-carousel hidden-xs absolute top-1/2 right-0 text-[60px] text-[#C2C2C1] hover:text-primary"
-                  data-slide="next"
-                >
-                  <i className="fa fa-angle-right"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+    <main className="space-y-12 py-8">
+      <Hero banners={banners} />
 
-      <section>
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap -mx-4">
-            <div className="w-full sm:w-1/4 px-4">
-              <Sidebar />
-            </div>
+      <div className="flex flex-col md:flex-row gap-8">
+        <aside className="w-full md:w-1/4">
+          <Sidebar categories={categories} priceBounds={priceBounds} />
+        </aside>
 
-            {bestSeller.length > 0 && newArrival.length > 0 ? (
-              <div className="w-full sm:w-3/4 px-4 padding-right">
-                {bestSeller.length > 0 && (
-                  <DataTable
-                    title="Best Seller"
-                    columns={[
-                      {
-                        field: "name",
-                        cell: productView,
-                      },
-                    ]}
-                    data={bestSeller}
-                  />
-                )}
-                {newArrival.length > 0 && (
-                  <DataTable
-                    title="New Arrival"
-                    columns={[
-                      {
-                        field: "name",
-                        cell: productView,
-                      },
-                    ]}
-                    data={newArrival}
-                  />
-                )}
-              </div>
-            ) : (
-              <div className="w-full sm:w-3/4 px-4 padding-right">
-                <DataTable
-                  columns={[
-                    {
-                      field: "name",
-                      cell: productView,
-                    },
-                  ]}
-                  data={products}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-    </div>
+        <main className="w-full md:w-3/4">
+          <section>
+            <h2 className="text-xl font-black uppercase italic mb-6 text-primary">
+              Best Sellers
+            </h2>
+            <ProductGrid products={bestSellers.products} />
+          </section>
+
+          <section className="-mx-4 px-4 py-12">
+            <h2 className="text-xl font-black uppercase italic mb-6 text-primary">
+              New Arrivals
+            </h2>
+            <ProductGrid products={newArrivals.products} />
+          </section>
+        </main>
+      </div>
+    </main>
   );
 }

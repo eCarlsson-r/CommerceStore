@@ -33,7 +33,7 @@ export default function Checkout() {
               <div className="w-full sm:w-1/4 px-4">
                 <div className="shopper-info mb-6">
                   <p
-                    className="text-xl font-light text-text-dark font-roboto mb-4"
+                    className="text-xl font-light text-text-dark mb-4"
                     data-i18n="shopper-information"
                   >
                     Shopper Information
@@ -71,10 +71,10 @@ export default function Checkout() {
                 <div className="bill-to mb-6">
                   <div className="flex flex-wrap mb-4">
                     <div className="w-full">
-                      <p className="float-left text-xl font-light text-text-dark font-roboto pt-1 text-bold">
+                      <p className="float-left text-xl font-light text-text-dark pt-1 text-bold">
                         <span data-i18n="ship-to">Ship To</span>
                       </p>
-                      <label className="float-right bg-primary text-white py-1 px-3 rounded-none hover:bg-primary/90 cursor-pointer font-roboto font-light">
+                      <label className="float-right bg-primary text-white py-1 px-3 rounded-none hover:bg-primary/90 cursor-pointer font-light">
                         <input
                           name="ship_to_bill"
                           type="checkbox"
@@ -152,7 +152,7 @@ export default function Checkout() {
               <div className="w-full sm:w-1/3 px-4">
                 <div className="order-message mb-6">
                   <p
-                    className="text-xl font-light text-text-dark font-roboto mb-4"
+                    className="text-xl font-light text-text-dark mb-4"
                     data-i18n="shipping-order"
                   >
                     Shipping Order
@@ -173,14 +173,14 @@ export default function Checkout() {
             <div className="flex flex-wrap -mx-4 mb-8">
               <div className="w-full px-4">
                 <h2
-                  className="text-xl font-bold text-text-main font-roboto float-left uppercase"
+                  className="text-xl font-bold text-text-main float-left uppercase"
                   data-i18n="shopping-cart"
                 >
                   Shopping Cart
                 </h2>
                 <button
                   id="proceed-payment"
-                  className="bg-primary text-white px-2 pr-10 pl-6 py-2 rounded-none hover:bg-primary/90 transition-colors float-right font-roboto font-light"
+                  className="bg-primary text-white px-2 pr-10 pl-6 py-2 rounded-none hover:bg-primary/90 transition-colors float-right font-light"
                   data-i18n="proceed-payment"
                 >
                   Update Details
@@ -199,7 +199,7 @@ export default function Checkout() {
                     data-query-params="getCheckoutItems"
                     data-response-handler="showCheckoutItems"
                   >
-                    <thead className="bg-primary text-white font-roboto">
+                    <thead className="bg-primary text-white">
                       <tr>
                         <th
                           data-field="product"
@@ -231,19 +231,19 @@ export default function Checkout() {
               <div className="w-full sm:w-1/3 px-4">
                 <div className="total_area bg-bg-light border border-border-light p-[30px_25px_30px_0] mb-[80px]">
                   <ul className="mb-4 list-none p-0">
-                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-roboto font-light">
+                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-light">
                       <b data-i18n="cart-subtotal">Cart Sub Total</b>{" "}
                       <span id="checkout_subtotal">$59</span>
                     </li>
-                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-roboto font-light">
+                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-light">
                       <b data-i18n="cart-tax">Exo Tax</b>{" "}
                       <span id="checkout_tax">$2</span>
                     </li>
-                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-roboto font-light">
+                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-light">
                       <b data-i18n="shipping-cost">Shipping Cost</b>{" "}
                       <span id="checkout_shipping">Free</span>
                     </li>
-                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] text-lg font-roboto font-light">
+                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] text-lg font-light">
                       <b data-i18n="total">Total</b>{" "}
                       <span
                         id="checkout_total"

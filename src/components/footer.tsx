@@ -11,7 +11,7 @@ export default function Footer() {
                 <h2 className="text-secondary text-[27px] font-abel uppercase mb-2">
                   <span>e</span>-shopper
                 </h2>
-                <p className="text-[#B3B3AD] text-xs font-light font-roboto">
+                <p className="text-[#B3B3AD] text-xs font-light">
                   Want an eternal beauty for your fashion and home? Collect them
                   all here in Carlsson Digital Commerce.
                 </p>
@@ -29,7 +29,7 @@ export default function Footer() {
                   height={190}
                   className="w-full"
                 />
-                <p className="text-[#666663] text-sm font-light font-roboto absolute top-[50px] left-[25px]">
+                <p className="text-[#666663] text-sm font-light absolute top-[50px] left-[25px]">
                   505 S Atlantic Ave Virginia Beach, VA(Virginia)
                 </p>
               </div>
@@ -43,14 +43,14 @@ export default function Footer() {
           <div className="flex flex-wrap -mx-4">
             <div className="w-full sm:w-1/5 px-4">
               <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase font-roboto">
+                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
                   Service
                 </h2>
                 <ul className="list-none p-0">
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Online Help
                     </a>
@@ -58,7 +58,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Contact Us
                     </a>
@@ -66,7 +66,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Order Status
                     </a>
@@ -74,7 +74,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Change Location
                     </a>
@@ -82,7 +82,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       FAQ’s
                     </a>
@@ -92,14 +92,14 @@ export default function Footer() {
             </div>
             <div className="w-full sm:w-1/5 px-4">
               <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase font-roboto">
+                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
                   Quock Shop
                 </h2>
                 <ul className="list-none p-0">
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       T-Shirt
                     </a>
@@ -107,7 +107,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Mens
                     </a>
@@ -115,7 +115,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Womens
                     </a>
@@ -123,7 +123,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Gift Cards
                     </a>
@@ -131,7 +131,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Shoes
                     </a>
@@ -141,14 +141,14 @@ export default function Footer() {
             </div>
             <div className="w-full sm:w-1/5 px-4">
               <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase font-roboto">
+                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
                   Policies
                 </h2>
                 <ul className="list-none p-0">
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Terms of Use
                     </a>
@@ -156,7 +156,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Privecy Policy
                     </a>
@@ -164,7 +164,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Refund Policy
                     </a>
@@ -172,7 +172,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Billing System
                     </a>
@@ -180,7 +180,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Ticket System
                     </a>
@@ -190,14 +190,14 @@ export default function Footer() {
             </div>
             <div className="w-full sm:w-1/5 px-4">
               <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase font-roboto">
+                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
                   About Shopper
                 </h2>
                 <ul className="list-none p-0">
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Company Information
                     </a>
@@ -205,7 +205,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Careers
                     </a>
@@ -213,7 +213,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Store Location
                     </a>
@@ -221,7 +221,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Affillate Program
                     </a>
@@ -229,7 +229,7 @@ export default function Footer() {
                   <li>
                     <a
                       href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block font-roboto"
+                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
                     >
                       Copyright
                     </a>
@@ -239,14 +239,14 @@ export default function Footer() {
             </div>
             <div className="w-full sm:w-1/5 px-4">
               <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase font-roboto">
+                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
                   About Shopper
                 </h2>
                 <form action="#" className="searchform">
                   <input
                     type="text"
                     placeholder="Your email address"
-                    className="border border-[#DDDDDD] text-[#CCCCC6] text-sm p-[7px] w-full mb-[10px] outline-none font-roboto"
+                    className="border border-[#DDDDDD] text-[#CCCCC6] text-sm p-[7px] w-full mb-[10px] outline-none"
                   />
                   <button
                     type="submit"
@@ -254,7 +254,7 @@ export default function Footer() {
                   >
                     Get it <i className="fas fa-arrow-right ml-1"></i>
                   </button>
-                  <p className="text-[#8C8C88] text-sm font-light mt-[25px] font-roboto">
+                  <p className="text-[#8C8C88] text-sm font-light mt-[25px]">
                     Get the most recent updates from <br />
                     our site and be updated your self...
                   </p>
@@ -269,7 +269,7 @@ export default function Footer() {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap -mx-4">
             <div className="w-full px-4">
-              <p className="text-text-dark text-sm font-light font-roboto ml-[15px]">
+              <p className="text-text-dark text-sm font-light ml-[15px]">
                 Copyright © {new Date().getFullYear()}{" "}
                 <a
                   href="//carlssonstudio.com/"
