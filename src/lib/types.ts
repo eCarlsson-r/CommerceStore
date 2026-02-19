@@ -154,3 +154,24 @@ export type ProductCard = {
   'media'?: Media[];
   'category': Category;
 }
+
+// ─── API Response Types ──────────────────────────────────────────────────────
+export type ProductsResponse = {
+  products: ProductCard[];
+  min_price: number;
+  max_price: number;
+};
+
+export type ProductResponse = {
+  product: ProductCard;
+  stocks: {
+    branch_name: string;
+    quantity: number;
+  }[];
+};
+
+export type BannersResponse = Banner[];
+
+export type CategoriesResponse = Category[];
+
+export type CustomerDetailsResponse = CustomerWithRelations;

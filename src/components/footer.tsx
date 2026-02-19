@@ -1,285 +1,75 @@
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer id="footer" className="bg-bg-light">
-      <div className="footer-top border-b border-[#E0E0DA] pb-5">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap -mx-4">
-            <div className="w-full sm:w-1/6 px-4">
-              <div className="companyinfo mt-[57px]">
-                <h2 className="text-secondary text-[27px] font-abel uppercase mb-2">
-                  <span>e</span>-shopper
-                </h2>
-                <p className="text-[#B3B3AD] text-xs font-light">
-                  Want an eternal beauty for your fashion and home? Collect them
-                  all here in Carlsson Digital Commerce.
-                </p>
-              </div>
+    <footer className="bg-white border-t border-gray-50 pt-20">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
+          
+          {/* Brand Story */}
+          <div className="lg:col-span-2 space-y-6">
+            <Image
+              src="/images/logo-text.png"
+              alt="Carlsson Digital Commerce"
+              width={180}
+              height={60}
+            />
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+              Handcrafting eternal beauty for over a decade. Discover our exclusive collections across premium branches in Medan & Binjai.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-6">Collections</h3>
+            <ul className="space-y-4">
+              <li><Link href="/shop?category=rings" className="text-sm text-gray-400 hover:text-primary transition-all">Engagement Rings</Link></li>
+              <li><Link href="/shop?category=necklaces" className="text-sm text-gray-400 hover:text-primary transition-all">Luxury Necklaces</Link></li>
+              <li><Link href="/shop?category=watches" className="text-sm text-gray-400 hover:text-primary transition-all">Timepieces</Link></li>
+              <li><Link href="/shop?category=gift-cards" className="text-sm text-gray-400 hover:text-primary transition-all">Gift Cards</Link></li>
+            </ul>
+          </div>
+
+          {/* Support */}
+          <div>
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-6">Service</h3>
+            <ul className="space-y-4">
+              <li><Link href="/faq" className="text-sm text-gray-400 hover:text-primary transition-all">Online Help</Link></li>
+              <li><Link href="/status" className="text-sm text-gray-400 hover:text-primary transition-all">Order Status</Link></li>
+              <li><Link href="/shipping" className="text-sm text-gray-400 hover:text-primary transition-all">Shipping Policy</Link></li>
+              <li><Link href="/locations" className="text-sm text-gray-400 hover:text-primary transition-all">Store Locations</Link></li>
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div className="space-y-6">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-6">Stay Inspired</h3>
+            <div className="relative group">
+              <input 
+                type="email" 
+                placeholder="email@example.com" 
+                className="w-full bg-gray-50 border-none p-4 rounded-2xl text-xs focus:ring-2 ring-primary/20"
+              />
+              <button className="absolute right-2 top-2 bg-primary text-white p-2 rounded-xl hover:scale-105 transition-all">
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-            <div className="w-full sm:w-7/12 px-4" id="branchGallery">
-              {/* Branch Gallery placeholders if needed */}
-            </div>
-            <div className="w-full sm:w-1/4 px-4">
-              <div className="address relative mt-[30px] overflow-hidden">
-                <Image
-                  src="/map.png"
-                  alt="World Map background."
-                  width={260}
-                  height={190}
-                  className="w-full"
-                />
-                <p className="text-[#666663] text-sm font-light absolute top-[50px] left-[25px]">
-                  505 S Atlantic Ave Virginia Beach, VA(Virginia)
-                </p>
-              </div>
-            </div>
+            <p className="text-[10px] text-gray-400 leading-tight">
+              Join our exclusive club for private sale access and new arrivals.
+            </p>
           </div>
         </div>
-      </div>
 
-      <div className="footer-widget mb-[68px]">
-        <div className="container mx-auto px-4 border-t border-white pt-[15px]">
-          <div className="flex flex-wrap -mx-4">
-            <div className="w-full sm:w-1/5 px-4">
-              <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
-                  Service
-                </h2>
-                <ul className="list-none p-0">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Online Help
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Contact Us
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Order Status
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Change Location
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      FAQ’s
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="w-full sm:w-1/5 px-4">
-              <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
-                  Quock Shop
-                </h2>
-                <ul className="list-none p-0">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      T-Shirt
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Mens
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Womens
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Gift Cards
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Shoes
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="w-full sm:w-1/5 px-4">
-              <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
-                  Policies
-                </h2>
-                <ul className="list-none p-0">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Terms of Use
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Privecy Policy
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Refund Policy
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Billing System
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Ticket System
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="w-full sm:w-1/5 px-4">
-              <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
-                  About Shopper
-                </h2>
-                <ul className="list-none p-0">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Company Information
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Careers
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Store Location
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Affillate Program
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-[#8C8C88] text-sm font-light hover:text-primary py-[5px] block"
-                    >
-                      Copyright
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="w-full sm:w-1/5 px-4">
-              <div className="single-widget">
-                <h2 className="text-text-main text-base font-medium mb-[22px] uppercase">
-                  About Shopper
-                </h2>
-                <form action="#" className="searchform">
-                  <input
-                    type="text"
-                    placeholder="Your email address"
-                    className="border border-[#DDDDDD] text-[#CCCCC6] text-sm p-[7px] w-full mb-[10px] outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-primary text-white p-[7px_17px] border-none inline-block hover:bg-primary/90 transition-colors"
-                  >
-                    Get it <i className="fas fa-arrow-right ml-1"></i>
-                  </button>
-                  <p className="text-[#8C8C88] text-sm font-light mt-[25px]">
-                    Get the most recent updates from <br />
-                    our site and be updated your self...
-                  </p>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="footer-bottom bg-[#D6D6D0] pt-[10px] pb-[10px]">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap -mx-4">
-            <div className="w-full px-4">
-              <p className="text-text-dark text-sm font-light ml-[15px]">
-                Copyright © {new Date().getFullYear()}{" "}
-                <a
-                  href="//carlssonstudio.com/"
-                  className="text-primary italic underline hover:text-primary"
-                >
-                  Carlsson Studio
-                </a>
-                . All Rights Reserved.
-              </p>
-            </div>
+        {/* Bottom Credits */}
+        <div className="border-t border-gray-50 py-10 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            © {new Date().getFullYear()} Republican Jewelry. Handcrafted in Medan.
+          </p>
+          <div className="flex gap-8">
+            <Link href="/terms" className="text-[10px] font-black text-gray-300 hover:text-primary uppercase tracking-widest">Terms</Link>
+            <Link href="/privacy" className="text-[10px] font-black text-gray-300 hover:text-primary uppercase tracking-widest">Privacy</Link>
           </div>
         </div>
       </div>

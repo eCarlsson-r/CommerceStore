@@ -26,14 +26,14 @@ export function CartDrawer() {
         )}
       </SheetTrigger>
 
-      <SheetContent className="w-full sm:max-w-md flex flex-col rounded-l-[3rem]">
+      <SheetContent className="w-full sm:max-w-md flex flex-col">
         <SheetHeader className="border-b pb-6">
           <SheetTitle className="text-xl font-black uppercase italic tracking-tighter">
             Your Bag
           </SheetTitle>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto py-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {cart.map((item: any) => (
             <div key={item.id} className="flex gap-4">
               <div className="w-20 h-20 bg-gray-50 rounded-2xl overflow-hidden shrink-0">
@@ -50,7 +50,12 @@ export function CartDrawer() {
                   {item.name}
                 </h4>
                 <p className="text-sm font-bold text-primary mt-1">
-                  Rp {item.price.toLocaleString()}
+                  {Number(item.price)
+                  .toLocaleString("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                  })
+                  .replace(",00", ",-")}
                 </p>
 
                 {/* Quantity Toggles */}
@@ -74,13 +79,18 @@ export function CartDrawer() {
           ))}
         </div>
 
-        <div className="border-t pt-6 space-y-4">
+        <div className="border-t p-6 space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-xs font-black uppercase text-gray-400">
               Estimated Total
             </span>
             <span className="text-xl font-black text-gray-900 italic">
-              Rp {cartTotal.toLocaleString()}
+              {Number(cartTotal)
+                  .toLocaleString("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                  })
+                  .replace(",00", ",-")}
             </span>
           </div>
           <button className="w-full py-5 bg-gray-900 text-white rounded-[2rem] font-black uppercase text-xs shadow-xl shadow-gray-200">

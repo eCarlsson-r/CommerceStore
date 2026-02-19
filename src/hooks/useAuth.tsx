@@ -3,24 +3,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { Branch } from "@/lib/types";
+import { Customer } from "@/lib/types";
 import Cookies from "js-cookie";
 
 interface User {
   id: number;
   username: string;
   type: string;
-  employee: {
-    id: number;
-    name: string;
-    branch_id: number;
-    gender: string;
-  };
-  branch: {
-    id: number;
-    name: string;
-  };
-  branches: Branch[];
+  customer: Customer;
 }
 
 interface AuthContextType {
@@ -42,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data } = await api.get("/user"); // Matches Laravel's Auth::user()
       setUser(data);
     } catch (err) {
-      console.info(err);
+      console.error(err);
       setUser(null);
       Cookies.remove("auth_token");
     } finally {
@@ -62,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (token: string) => {
     Cookies.set("auth_token", token, { expires: 7, secure: true });
     await fetchUser();
-    router.push("/dashboard");
+    if (user) router.push("/account/"+user.id);
   };
 
   const logout = () => {

@@ -4,6 +4,9 @@ import { z } from 'zod';
 export const BannerSchema = z.object({
   id: z.coerce.number().nullable().optional(),
   title: z.string(),
+  description: z.string().optional(),
+  image_url: z.string().nullable().optional(),
+  url: z.string().nullable().optional(),
   link_url: z.string().nullable().optional(),
   order_priority: z.coerce.number().default(0),
   is_active: z.coerce.boolean().default(true),

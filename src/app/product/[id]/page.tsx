@@ -1,19 +1,40 @@
-// app/product/[id]/page.tsx
-import api from "@/lib/api";
-import { ProductCard } from "@/lib/types"; // Your type definition
+"use client"
+
 import { ImageGallery } from "@/components/product/ImageGallery";
 import { StockAvailability } from "@/components/product/StockAvailability";
 import { Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useProduct } from "@/hooks/useDataFetchers";
+import { useCart } from "@/context/CartContext";
+import { useParams } from "next/navigation";
 
-export default async function ProductPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  // Fetch product detail + branch stock levels
-  const response = await api.get(`/product/${params.id}`);
-  const product: ProductCard = response.data.product;
-  const branchStocks = response.data.stocks; // Array of { branch_name, quantity }
+export default function ProductPage() {
+  const params = useParams();
+  const productId = params.id as string;
+
+  const { data: productResponse, isLoading, error } = useProduct(productId);
+  const { addToCart } = useCart();
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center">Loading product...</div>
+      </div>
+    );
+  }
+
+  if (error || !productResponse) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center text-red-500">
+          Error loading product. Please try again.
+        </div>
+      </div>
+    );
+  }
+
+  const product = productResponse.product;
+  const branchStocks = productResponse.stocks;
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -24,15 +45,20 @@ export default async function ProductPage({
         {/* Right: Product Info & Actions */}
         <div className="space-y-8">
           <div>
-            <p className="text-xs font-black text-primary uppercase tracking-widest mb-2">
+            <p className="text-xs font-black text-secondary uppercase tracking-widest mb-2">
               {product.category.name}
             </p>
-            <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter italic">
+            <h1 className="text-4xl font-black text-primary uppercase tracking-tighter italic">
               {product.name}
             </h1>
             <div className="flex items-center gap-4 mt-4">
-              <span className="text-3xl font-black text-gray-900">
-                Rp {product.price.toLocaleString()}
+              <span className="text-3xl font-black text-primary">
+                {Number(product.price)
+                  .toLocaleString("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                  })
+                  .replace(",00", ",-")}
               </span>
               {product.discount > 0 && (
                 <span className="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-md">
@@ -51,12 +77,12 @@ export default async function ProductPage({
 
           {/* Call to Action */}
           <div className="flex gap-4">
-            <button className="flex-1 bg-gray-900 text-white py-5 rounded-2xl font-black uppercase text-xs shadow-2xl hover:bg-primary transition-all">
+            <Button onClick={() => addToCart(product)} className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase text-xs shadow-2xl hover:bg-secondary transition-all">
               Add to Shopping Bag
-            </button>
-            <button className="p-5 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+            </Button>
+            <Button className="p-5 rounded-2xl hover:bg-secondary transition-all">
               <Heart className="w-6 h-6" />
-            </button>
+            </Button>
           </div>
 
           {/* Branch Availability Section */}

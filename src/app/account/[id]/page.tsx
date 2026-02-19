@@ -1,4 +1,33 @@
+"use client"
+
+import { Input } from "@/components/ui/input";
+import { useCustomerDetails } from "@/hooks/useDataFetchers";
+import { useParams } from "next/navigation";
+
 export default function Account() {
+  const params = useParams();
+  const { data: customer, isLoading, isError } = useCustomerDetails(params.id as string);
+
+  if (isLoading) {
+    return (
+      <div className="py-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center">Loading account details...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !customer) {
+    return (
+      <div className="py-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center text-red-500">Error loading account details</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div id="account" className="py-12">
       <div className="container mx-auto px-4">
@@ -39,7 +68,7 @@ export default function Account() {
             </h2>
             <div className="flex flex-wrap -mx-4">
               <div className="w-full sm:w-1/2 px-4">
-                <input
+                <Input
                   title=""
                   name="acc_password"
                   type="password"
@@ -50,7 +79,7 @@ export default function Account() {
               </div>
 
               <div className="w-full sm:w-1/2 px-4">
-                <input
+                <Input
                   title=""
                   name="acc_confirm-password"
                   type="password"
@@ -70,15 +99,12 @@ export default function Account() {
               Personal Details
             </h2>
             <div className="flex flex-wrap -mx-4">
-              <input type="hidden" name="customer-account" />
-              <input type="hidden" name="customer-code" />
               <div className="w-full sm:w-1/2 px-4 space-y-4">
-                <input
-                  name="customer-name"
+                <Input
                   title="Full Name"
                   type="text"
                   className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                  data-i18n="[placeholder]full-name-mandatory"
+                  value={customer.name}
                   placeholder="Full Name"
                 />
                 <select
@@ -92,19 +118,18 @@ export default function Account() {
               </div>
 
               <div className="w-full sm:w-1/2 px-4 space-y-4">
-                <input
-                  title=""
-                  name="customer-email"
-                  type="text"
+                <Input
+                  title="E-mail Address"
+                  type="email"
                   className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
+                  value={customer.email || ""}
                   placeholder="Email* (this is your username)"
                 />
-                <input
-                  title=""
-                  name="customer-mobile"
+                <Input
+                  title="Mobile Phone"
                   type="text"
                   className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                  data-i18n="[placeholder]mobile-phone"
+                  value={customer.mobile || ""}
                   placeholder="Mobile Phone"
                 />
               </div>
@@ -120,7 +145,7 @@ export default function Account() {
             </h2>
             <div className="flex flex-wrap -mx-4">
               <div className="w-full sm:w-1/2 px-4 space-y-4">
-                <input
+                <Input
                   title=""
                   name="address1"
                   type="text"
@@ -128,7 +153,7 @@ export default function Account() {
                   data-i18n="[placeholder]billing-address-1-mandatory"
                   placeholder="Billing Address 1"
                 />
-                <input
+                <Input
                   title=""
                   name="address2"
                   type="text"
@@ -145,7 +170,7 @@ export default function Account() {
               </div>
 
               <div className="w-full sm:w-1/2 px-4 space-y-4">
-                <input
+                <Input
                   title=""
                   name="zipcode"
                   type="text"

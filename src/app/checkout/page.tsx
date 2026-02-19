@@ -1,264 +1,120 @@
-export default function Checkout() {
+"use client";
+import { useCart } from "@/context/CartContext";
+import { useState } from "react";
+import api from "@/lib/api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
+export default function CheckoutPage() {
+  const { cart, cartTotal } = useCart();
+  const router = useRouter();
+  const [method, setMethod] = useState<"shipping" | "pickup">("shipping");
+  const [loading, setLoading] = useState(false);
+
+  const branches = [
+    "Medan Fair Mall", "Sun Plaza", "Binjai Supermall", 
+    "Thamrin Plaza", "Delipark", "Millennium ICT", // Add all 11
+  ];
+
+  const handleSubmitOrder = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    const formData = new FormData(e.currentTarget);
+    const orderData = {
+      items: cart,
+      total: cartTotal,
+      type: method,
+      details: Object.fromEntries(formData),
+    };
+
+    try {
+      const { data } = await api.post("/ecommerce/orders", orderData);
+      toast.success("Order placed successfully!");
+      // Clear cart logic here
+      router.push(`/order-success/${data.order_id}`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to process order. Please check your stock.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div id="checkout" className="py-12">
-      <div className="container mx-auto px-4">
-        <div className="breadcrumbs mb-10">
-          <ol className="flex bg-transparent p-0 text-text-main text-sm">
-            <li className="mr-2">
-              <a href="#home" data-i18n="home" className="hover:text-primary">
-                Home
-              </a>
-            </li>
-            <li className="mr-2">/</li>
-            <li className="mr-2">
-              <a
-                href="#cart"
-                data-i18n="shopping-cart"
-                className="hover:text-primary"
+    <div className="container mx-auto px-6 py-12">
+      <form onSubmit={handleSubmitOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        
+        {/* Left: Forms */}
+        <div className="lg:col-span-7 space-y-12">
+          <section>
+            <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-8">Delivery Method</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <button 
+                type="button"
+                onClick={() => setMethod("shipping")}
+                className={`p-6 rounded-[2rem] border-2 transition-all text-left ${method === "shipping" ? "border-primary bg-primary/5" : "border-gray-100"}`}
               >
-                Shopping Cart
-              </a>
-            </li>
-            <li className="mr-2">/</li>
-            <li className="text-primary" data-i18n="checkout">
-              Check out
-            </li>
-          </ol>
+                <p className="font-black uppercase text-xs">Standard Shipping</p>
+                <p className="text-[10px] text-gray-400 mt-1">Direct to your doorstep</p>
+              </button>
+              <button 
+                type="button"
+                onClick={() => setMethod("pickup")}
+                className={`p-6 rounded-[2rem] border-2 transition-all text-left ${method === "pickup" ? "border-primary bg-primary/5" : "border-gray-100"}`}
+              >
+                <p className="font-black uppercase text-xs">In-Store Pickup</p>
+                <p className="text-[10px] text-gray-400 mt-1">Pick up at any branch</p>
+              </button>
+            </div>
+          </section>
+
+          {method === "shipping" ? (
+            <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
+              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Shipping Address</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <input name="address" placeholder="STREET ADDRESS" className="col-span-2 p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
+                <input name="city" placeholder="CITY" className="p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
+                <input name="postal" placeholder="POSTAL CODE" className="p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
+              </div>
+            </section>
+          ) : (
+            <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
+              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Select Branch</h3>
+              <select name="branch_name" className="w-full p-4 bg-gray-50 rounded-2xl border-none text-sm font-bold appearance-none">
+                {branches.map(b => <option key={b} value={b}>{b.toUpperCase()}</option>)}
+              </select>
+            </section>
+          )}
         </div>
-        {/*/breadcrums*/}
 
-        <form id="checkout-details">
-          <div className="shopper-informations mb-10">
-            <div className="flex flex-wrap -mx-4">
-              <div className="w-full sm:w-1/4 px-4">
-                <div className="shopper-info mb-6">
-                  <p
-                    className="text-xl font-light text-text-dark mb-4"
-                    data-i18n="shopper-information"
-                  >
-                    Shopper Information
-                  </p>
-                  <div className="space-y-3">
-                    <input type="hidden" name="customer-no" />
-                    <input
-                      title=""
-                      name="customer-name"
-                      type="text"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[placeholder]full-name"
-                      placeholder="Full Name"
-                    />
-                    <input
-                      title=""
-                      name="customer-email"
-                      type="email"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[placeholder]email-address"
-                      placeholder="Email Address"
-                    />
-                    <input
-                      title=""
-                      name="customer-mobile"
-                      type="text"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[placeholder]mobile-phone-mandatory"
-                      placeholder="Mobile Phone"
-                    />
-                  </div>
+        {/* Right: Summary */}
+        <div className="lg:col-span-5">
+          <div className="bg-gray-50 rounded-[3rem] p-10 sticky top-10">
+            <h2 className="text-xl font-black uppercase italic tracking-tighter mb-8">Order Summary</h2>
+            <div className="space-y-4 mb-8">
+              {cart.map(item => (
+                <div key={item.id} className="flex justify-between items-center text-sm">
+                  <span className="font-bold text-gray-600">{item.quantity}x {item.name}</span>
+                  <span className="font-mono">Rp {(item.price * item.quantity).toLocaleString()}</span>
                 </div>
-              </div>
-              <div className="w-full sm:w-5/12 px-4">
-                <div className="bill-to mb-6">
-                  <div className="flex flex-wrap mb-4">
-                    <div className="w-full">
-                      <p className="float-left text-xl font-light text-text-dark pt-1 text-bold">
-                        <span data-i18n="ship-to">Ship To</span>
-                      </p>
-                      <label className="float-right bg-primary text-white py-1 px-3 rounded-none hover:bg-primary/90 cursor-pointer font-light">
-                        <input
-                          name="ship_to_bill"
-                          type="checkbox"
-                          className="mr-2"
-                        />{" "}
-                        <span data-i18n="ship-to-bill">
-                          Shipping to bill address
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <input
-                      name="recipient-name"
-                      type="text"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[placeholder]recipient-name"
-                      placeholder="Recipient Name"
-                    />
-                    <input
-                      name="shipping-address1"
-                      type="text"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[placeholder]shipping-address-1-mandatory"
-                      placeholder="Shipping Address 1"
-                    />
-                    <input
-                      name="shipping-address2"
-                      type="text"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[placeholder]shipping-address-2"
-                      placeholder="Shipping Address 2"
-                    />
-                    <input
-                      type="number"
-                      name="shipping-zipcode"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[placeholder]zip-code-mandatory"
-                      placeholder="Zip Code"
-                    />
-                    <select
-                      data-live-search="true"
-                      title="Shipping Country"
-                      name="shipping-country"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[title]shipping-country"
-                    ></select>
-                    <select
-                      data-live-search="true"
-                      title="Shipping Province"
-                      name="shipping-province"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[title]shipping-province"
-                    ></select>
-                    <select
-                      data-live-search="true"
-                      title="Shipping City"
-                      name="shipping-city"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                      data-i18n="[title]shipping-city"
-                    ></select>
-                    <select
-                      data-live-search="true"
-                      title="Shipping Method"
-                      name="shipping-method"
-                      className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary font-light text-text-main"
-                    >
-                      <option data-i18n="shipping-method">
-                        Shipping Method
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full sm:w-1/3 px-4">
-                <div className="order-message mb-6">
-                  <p
-                    className="text-xl font-light text-text-dark mb-4"
-                    data-i18n="shipping-order"
-                  >
-                    Shipping Order
-                  </p>
-                  <textarea
-                    name="order-message"
-                    className="w-full bg-bg-light border border-border-light p-3 outline-none focus:ring-1 focus:ring-primary resize-none h-64 font-light text-text-main"
-                    data-i18n="[placeholder]shipping-instruction-msg"
-                    placeholder="Notes about your order, Special Notes for Delivery"
-                    rows={4}
-                  ></textarea>
-                </div>
-              </div>
+              ))}
             </div>
+            <div className="border-t border-gray-200 pt-6 flex justify-between items-end">
+              <span className="text-[10px] font-black uppercase text-gray-400">Total Amount</span>
+              <span className="text-3xl font-black text-primary italic leading-none">
+                Rp {cartTotal.toLocaleString()}
+              </span>
+            </div>
+            <button 
+              disabled={loading}
+              className="w-full mt-10 py-6 bg-gray-900 text-white rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-primary transition-all shadow-xl"
+            >
+              {loading ? "Processing Order..." : "Place Order Now"}
+            </button>
           </div>
-
-          <div className="review-payment py-10 border-t border-gray-200">
-            <div className="flex flex-wrap -mx-4 mb-8">
-              <div className="w-full px-4">
-                <h2
-                  className="text-xl font-bold text-text-main float-left uppercase"
-                  data-i18n="shopping-cart"
-                >
-                  Shopping Cart
-                </h2>
-                <button
-                  id="proceed-payment"
-                  className="bg-primary text-white px-2 pr-10 pl-6 py-2 rounded-none hover:bg-primary/90 transition-colors float-right font-light"
-                  data-i18n="proceed-payment"
-                >
-                  Update Details
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap -mx-4">
-              <div className="w-full sm:w-2/3 px-4 mb-6">
-                <div className="border border-border-light overflow-x-auto">
-                  <table
-                    id="table-checkout"
-                    className="w-full text-left border-collapse"
-                    data-toggle="table"
-                    data-url=""
-                    data-query-params="getCheckoutItems"
-                    data-response-handler="showCheckoutItems"
-                  >
-                    <thead className="bg-primary text-white">
-                      <tr>
-                        <th
-                          data-field="product"
-                          data-formatter="cartDetailFormatter"
-                          className="w-1/2 p-3 font-normal"
-                        ></th>
-                        <th
-                          data-field="product-price"
-                          data-formatter="cartIDRFormatter"
-                          className="w-1/6 p-3 font-normal text-center"
-                        ></th>
-                        <th
-                          data-field="quantity"
-                          data-formatter="cartTextFormatter"
-                          className="w-1/6 p-3 font-normal text-center"
-                        ></th>
-                        <th
-                          data-field="total"
-                          data-formatter="subtotalFormatter"
-                          className="w-1/6 p-3 font-normal text-center"
-                        ></th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="w-full sm:w-1/3 px-4">
-                <div className="total_area bg-bg-light border border-border-light p-[30px_25px_30px_0] mb-[80px]">
-                  <ul className="mb-4 list-none p-0">
-                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-light">
-                      <b data-i18n="cart-subtotal">Cart Sub Total</b>{" "}
-                      <span id="checkout_subtotal">$59</span>
-                    </li>
-                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-light">
-                      <b data-i18n="cart-tax">Exo Tax</b>{" "}
-                      <span id="checkout_tax">$2</span>
-                    </li>
-                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] font-light">
-                      <b data-i18n="shipping-cost">Shipping Cost</b>{" "}
-                      <span id="checkout_shipping">Free</span>
-                    </li>
-                    <li className="flex justify-between bg-[#E6E4DF] text-text-main py-[7px] px-[20px] mt-[10px] text-lg font-light">
-                      <b data-i18n="total">Total</b>{" "}
-                      <span
-                        id="checkout_total"
-                        className="text-primary font-bold"
-                      >
-                        $61
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }

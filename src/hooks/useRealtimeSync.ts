@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect } from 'react'
 import { echo } from '@/lib/echo' // Your Echo instance
 
