@@ -61,3 +61,25 @@ export function useCustomerDetails(id?: string | number) {
     enabled: !!id
   })
 }
+
+export function useBranches() {
+  return useQuery<string[]>({
+    queryKey: ['branches'],
+    queryFn: async () => {
+      // This endpoint should return: ["Medan Fair", "Sun Plaza", "Binjai Mall", ...]
+      const res = await api.get('/ecommerce/branches')
+      return res.data
+    }
+  })
+}
+
+export function useOrder(id?: string | number) {
+  return useQuery({
+    queryKey: ['order', id],
+    queryFn: async () => {
+      const res = await api.get(`/ecommerce/orders/${id}`)
+      return res.data
+    },
+    enabled: !!id
+  })
+}

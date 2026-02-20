@@ -9,11 +9,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingBag, Trash2, Minus, Plus } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import Image from "next/image";
 
 export function CartDrawer() {
-  const { cart, removeFromCart, cartTotal } = useCart();
+  const { cart, cartTotal } = useCart();
 
   return (
     <Sheet>
@@ -34,47 +34,39 @@ export function CartDrawer() {
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {cart.map((item: any) => (
-            <div key={item.id} className="flex gap-4">
-              <div className="w-20 h-20 bg-gray-50 rounded-2xl overflow-hidden shrink-0">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-cover"
-                />
+          {cart.map((item) => (
+            <div key={`${item.id}-${item.branch.id}`} className="flex gap-4 py-4 border-b border-gray-50 last:border-0">
+              <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-gray-50">
+                <Image src={item.image} alt={item.name} fill className="object-cover" />
               </div>
-              <div className="flex-1">
-                <h4 className="text-xs font-black uppercase truncate w-40">
-                  {item.name}
-                </h4>
-                <p className="text-sm font-bold text-primary mt-1">
-                  {Number(item.price)
-                  .toLocaleString("id-ID", {
-                    style: "currency",
-                    currency: "IDR",
-                  })
-                  .replace(",00", ",-")}
-                </p>
-
-                {/* Quantity Toggles */}
-                <div className="flex items-center gap-3 mt-3">
-                  <button className="p-1 rounded-md bg-gray-100">
-                    <Minus className="w-3 h-3" />
-                  </button>
-                  <span className="text-xs font-black">{item.quantity}</span>
-                  <button className="p-1 rounded-md bg-gray-100">
-                    <Plus className="w-3 h-3" />
-                  </button>
+              
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-[10px] font-black uppercase italic leading-tight">{item.name}</h4>
+                  
+                  {/* The Branch Marker */}
+                  <div className="flex items-center gap-1 mt-1">
+                    <div className="w-1 h-1 rounded-full bg-green-500" />
+                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">
+                      Available @ {item.branch.name}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-end mt-2">
+                  <p className="text-sm font-black text-primary">
+                    {Number(item.price)
+                      .toLocaleString("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      })
+                      .replace(",00", ",-")}
+                  </p>
+                  <div className="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded-md">
+                    QTY: {item.quantity}
+                  </div>
                 </div>
               </div>
-              <button
-                onClick={() => removeFromCart(item.id)}
-                className="text-gray-300 hover:text-red-500"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
             </div>
           ))}
         </div>

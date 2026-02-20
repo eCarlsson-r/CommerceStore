@@ -57,7 +57,7 @@ export default function Header() {
             <nav className="flex items-center gap-2 sm:gap-6">
               {user ? (
                 <>
-                  <Link href={`/account/${user.id}`} className="p-2 text-gray-400 hover:text-primary transition-colors flex items-center gap-2">
+                  <Link href="/account/" className="p-2 text-gray-400 hover:text-primary transition-colors flex items-center gap-2">
                     <User className="w-5 h-5" />
                     <span className="hidden lg:inline text-[10px] font-black uppercase tracking-widest">Account</span>
                   </Link>

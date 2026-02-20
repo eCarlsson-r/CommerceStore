@@ -4,17 +4,21 @@ import { useState } from "react";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { useBranches } from "@/hooks/useDataFetchers";
+import { cn } from "@/lib/utils";
 
 export default function CheckoutPage() {
-  const { cart, cartTotal } = useCart();
+  const { cart, cartTotal, clearCart } = useCart();
   const router = useRouter();
+  const { data: branches, isLoading: branchesLoading } = useBranches();
+  const [selectedBranch, setSelectedBranch] = useState(0);
   const [method, setMethod] = useState<"shipping" | "pickup">("shipping");
   const [loading, setLoading] = useState(false);
 
-  const branches = [
-    "Medan Fair Mall", "Sun Plaza", "Binjai Supermall", 
-    "Thamrin Plaza", "Delipark", "Millennium ICT", // Add all 11
-  ];
+  const isBranchValid = method === "pickup" 
+  ? cart.every(item => item.branch.id === selectedBranch)
+  : true;
 
   const handleSubmitOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +36,10 @@ export default function CheckoutPage() {
       const { data } = await api.post("/ecommerce/orders", orderData);
       toast.success("Order placed successfully!");
       // Clear cart logic here
-      router.push(`/order-success/${data.order_id}`);
+      if (data.order_id) {
+        clearCart(); // Wipe the cart so they don't buy the same thing twice
+        router.push(`/order-success/${data.order_id}`);
+      }
     } catch (err) {
       console.error(err);
       toast.error("Failed to process order. Please check your stock.");
@@ -73,17 +80,32 @@ export default function CheckoutPage() {
             <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
               <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Shipping Address</h3>
               <div className="grid grid-cols-2 gap-4">
-                <input name="address" placeholder="STREET ADDRESS" className="col-span-2 p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
-                <input name="city" placeholder="CITY" className="p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
-                <input name="postal" placeholder="POSTAL CODE" className="p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
+                <Input name="address" placeholder="STREET ADDRESS" className="col-span-2 p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
+                <Input name="city" placeholder="CITY" className="p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
+                <Input name="postal" placeholder="POSTAL CODE" className="p-4 bg-gray-50 rounded-2xl border-none text-sm" required />
               </div>
             </section>
           ) : (
             <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
               <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Select Branch</h3>
-              <select name="branch_name" className="w-full p-4 bg-gray-50 rounded-2xl border-none text-sm font-bold appearance-none">
-                {branches.map(b => <option key={b} value={b}>{b.toUpperCase()}</option>)}
-              </select>
+              {branchesLoading ? (
+                <div className="h-14 w-full bg-gray-50 animate-pulse rounded-2xl" />
+              ) : (
+                <select 
+                  name="branch_id" 
+                  required
+                  value={selectedBranch}
+                  onChange={(e) => setSelectedBranch(parseInt(e.target.value))}
+                  className="w-full p-4 bg-gray-50 rounded-2xl border-none text-sm font-bold appearance-none cursor-pointer focus:ring-2 ring-primary/20"
+                >
+                  <option value="">-- CHOOSE A LOCATION --</option>
+                  {branches?.map((branch) => (
+                    <option key={branch} value={branch}>
+                      {branch.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+              )}
             </section>
           )}
         </div>
@@ -107,10 +129,13 @@ export default function CheckoutPage() {
               </span>
             </div>
             <button 
-              disabled={loading}
-              className="w-full mt-10 py-6 bg-gray-900 text-white rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-primary transition-all shadow-xl"
+              disabled={!isBranchValid || loading}
+              className={cn(
+                  "w-full py-6 rounded-[2rem] font-black uppercase text-xs tracking-widest transition-all",
+                  isBranchValid ? "bg-gray-900 text-white" : "bg-gray-200 text-gray-400 cursor-not-allowed"
+              )}
             >
-              {loading ? "Processing Order..." : "Place Order Now"}
+              {isBranchValid ? "Place Order Now" : "Branch Mismatch"}
             </button>
           </div>
         </div>

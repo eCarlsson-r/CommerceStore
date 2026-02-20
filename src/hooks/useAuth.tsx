@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (token: string) => {
     Cookies.set("auth_token", token, { expires: 7, secure: true });
     await fetchUser();
-    if (user) router.push("/account/"+user.id);
+    if (user) router.push("/account/");
   };
 
   const logout = () => {

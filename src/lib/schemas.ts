@@ -48,6 +48,7 @@ export const CategorySchema = z.object({
 export const CustomerSchema = z.object({
   id: z.coerce.number().nullable().optional(),
   name: z.string(),
+  gender: z.string().default('M'),
   mobile: z.string().nullable().optional(),
   email: z.string().nullable().optional(),
   address: z.string().nullable().optional(),

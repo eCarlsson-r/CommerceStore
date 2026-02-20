@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useProduct } from "@/hooks/useDataFetchers";
 import { useCart } from "@/context/CartContext";
 import { useParams } from "next/navigation";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function ProductPage() {
   const params = useParams();
@@ -14,6 +16,15 @@ export default function ProductPage() {
 
   const { data: productResponse, isLoading, error } = useProduct(productId);
   const { addToCart } = useCart();
+
+  const [selectedStock, setSelectedStock] = useState(
+    productResponse?.stocks.find(s => s.quantity > 0) || productResponse?.stocks[0]
+  );
+
+  const handleAddToCart = () => {
+    // We pass the product object + the branch details selected by the user
+    if (productResponse && selectedStock) addToCart(productResponse.product, selectedStock.branch);
+  };
 
   if (isLoading) {
     return (
@@ -69,15 +80,30 @@ export default function ProductPage() {
           </div>
 
           <div className="border-t border-b border-gray-100 py-6">
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Premium quality jewelry from Republican Retail. Handcrafted
-              excellence available across our 11 branches.
-            </p>
+            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Available at Boutique:</p>
+            <div className="flex flex-wrap gap-2">
+              {productResponse.stocks.map((stock) => (
+                <button
+                  key={stock.branch.id}
+                  disabled={stock.quantity === 0}
+                  onClick={() => setSelectedStock(stock)}
+                  className={cn(
+                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase border-2 transition-all",
+                    selectedStock?.branch.id === stock.branch.id 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-gray-100 text-gray-400",
+                    stock.quantity === 0 && "opacity-30 cursor-not-allowed"
+                  )}
+                >
+                  {stock.branch.id} ({stock.quantity})
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Call to Action */}
           <div className="flex gap-4">
-            <Button onClick={() => addToCart(product)} className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase text-xs shadow-2xl hover:bg-secondary transition-all">
+            <Button onClick={() => handleAddToCart()} className="flex-1 bg-primary text-white py-5 rounded-2xl font-black uppercase text-xs shadow-2xl hover:bg-secondary transition-all">
               Add to Shopping Bag
             </Button>
             <Button className="p-5 rounded-2xl hover:bg-secondary transition-all">

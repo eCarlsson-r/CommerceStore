@@ -48,6 +48,7 @@ export type CategoryWithRelations = Category & {
 };
 
 export type CustomerWithRelations = Customer & {
+  orders?: Order[];
   sales?: Sale[];
 };
 
@@ -165,7 +166,7 @@ export type ProductsResponse = {
 export type ProductResponse = {
   product: ProductCard;
   stocks: {
-    branch_name: string;
+    branch: Branch;
     quantity: number;
   }[];
 };
@@ -175,3 +176,9 @@ export type BannersResponse = Banner[];
 export type CategoriesResponse = Category[];
 
 export type CustomerDetailsResponse = CustomerWithRelations;
+
+// Updated types in context/CartContext.tsx or lib/types.ts
+export interface CartItem extends ProductCard {
+  quantity: number;
+  branch: Branch;   // Use ID for precise matching
+}

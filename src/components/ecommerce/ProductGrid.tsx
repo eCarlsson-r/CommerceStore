@@ -1,10 +1,10 @@
 // components/ecommerce/ProductGrid.tsx
 import { ProductView } from "./ProductView";
-import { ProductCard } from "@/lib/types";
+import { ProductResponse } from "@/lib/types";
 import { Search } from "lucide-react";
 import Link from "next/link";
 
-export function ProductGrid({ products }: { products: ProductCard[] }) {
+export function ProductGrid({ products }: { products: ProductResponse[] }) {
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -30,7 +30,7 @@ export function ProductGrid({ products }: { products: ProductCard[] }) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
         {products.map((product) => (
-          <ProductView key={product.id} product={product} />
+          <ProductView key={product.product.id} product={product.product} branch={product.stocks[0].branch} />
         ))}
       </div>
     );

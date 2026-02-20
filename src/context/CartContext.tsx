@@ -1,39 +1,61 @@
-// context/CartContext.tsx
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { ProductCard } from "@/lib/types";
+import { Branch, CartItem, ProductCard } from "@/lib/types";
 import { toast } from "sonner";
 
-const CartContext = createContext<any>(null);
+// 2. Define the Context interface
+interface CartContextType {
+  cart: CartItem[];
+  addToCart: (product: ProductCard, branch: Branch) => void;
+  removeFromCart: (id: number) => void;
+  clearCart: () => void;
+  cartTotal: number;
+}
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<ProductCard[]>([]);
+  // 3. Lazy Initializer: This fixes the "Cascading Renders" error
+  // It reads from localStorage during the initial state creation, not in an effect.
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("shopping_cart");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
 
-  // Load cart from LocalStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem("shopping_cart");
-    if (savedCart) setCart(JSON.parse(savedCart));
-  }, []);
-
-  // Save to LocalStorage whenever cart changes
+  // Keep localStorage in sync when cart changes (This is the correct use of Effect)
   useEffect(() => {
     localStorage.setItem("shopping_cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (product: ProductCard) => {
+  const addToCart = (product: ProductCard, branch: Branch) => {
     setCart((prev) => {
-      const exists = prev.find((item) => item.id === product.id);
+      // We now check for uniqueness based on BOTH Product ID and Branch ID
+      const exists = prev.find(
+        (item) => item.id === product.id && item.branch.id === branch.id
+      );
+
       if (exists) {
-        toast.info("Item quantity updated in bag");
+        toast.info(`Quantity updated for ${branch.name} stock`);
         return prev.map((item) =>
-          item.id === product.id
+          item.id === product.id && item.branch.id === branch.id
             ? { ...item, quantity: item.quantity + 1 }
-            : item,
+            : item
         );
       }
-      toast.success(`${product.name} added to bag`);
-      return [...prev, { ...product, quantity: 1 }];
+
+      toast.success(`${product.name} added from ${branch.name}`);
+      return [
+        ...prev,
+        { 
+          ...product, 
+          quantity: 1, 
+          branch: branch
+        },
+      ];
     });
   };
 
@@ -41,18 +63,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
+
   const cartTotal = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
-    0,
+    0
   );
 
   return (
-    <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, cartTotal }}
-    >
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, cartTotal }}>
       {children}
     </CartContext.Provider>
   );
 }
 
-export const useCart = () => useContext(CartContext);
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) throw new Error("useCart must be used within CartProvider");
+  return context;
+};

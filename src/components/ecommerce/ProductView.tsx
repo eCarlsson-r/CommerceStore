@@ -1,12 +1,18 @@
 "use client";
 import Image from "next/image";
-import { ProductCard } from "@/lib/types";
+import { Branch, ProductCard } from "@/lib/types";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { Button } from "../ui/button";
 
-export function ProductView({ product }: { product: ProductCard }) {
+export function ProductView({ product, branch }: { product: ProductCard, branch: Branch }) {
   const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    // We pass the product object + the branch details selected by the user
+    if (product) addToCart(product, branch); // For simplicity, we use the first branch's stock. In a real app, you'd let users choose the branch.
+  };
+
   return (
     <div className="group relative bg-white border border-gray-100 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500">
       {product.discount > 0 && (
@@ -62,7 +68,7 @@ export function ProductView({ product }: { product: ProductCard }) {
         </div>
 
         <Button
-          onClick={() => addToCart(product)}
+          onClick={() => handleAddToCart}
           className="mt-6 w-full py-3 bg-gray-900 text-white rounded-xl text-[10px] font-black uppercase hover:bg-primary transition-colors"
         >
           Add to Cart
