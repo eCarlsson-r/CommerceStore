@@ -3,12 +3,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Branch, CartItem, ProductCard } from "@/lib/types";
 import { toast } from "sonner";
+import api from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 
 // 2. Define the Context interface
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: ProductCard, branch: Branch) => void;
-  removeFromCart: (id: number) => void;
+  updateQuantity: (id: number, branch: Branch, delta: number) => void;
+  removeFromCart: (id: number, branch: Branch) => void;
   clearCart: () => void;
   cartTotal: number;
 }
@@ -16,51 +19,52 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  // 3. Lazy Initializer: This fixes the "Cascading Renders" error
-  // It reads from localStorage during the initial state creation, not in an effect.
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("shopping_cart");
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
+  const { user } = useAuth(); // Assume you have an Auth hook
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  // Keep localStorage in sync when cart changes (This is the correct use of Effect)
+  // 1. Initial Load: Local for guests, API for users
   useEffect(() => {
-    localStorage.setItem("shopping_cart", JSON.stringify(cart));
-  }, [cart]);
+    if (user) {
+      // Fetch cart from Laravel
+      api.get('/ecommerce/cart').then(res => setCart(res.data));
+    } else {
+      const saved = localStorage.getItem("shopping_cart");
+      if (saved) setCart(JSON.parse(saved));
+    }
+  }, [user]);
 
-  const addToCart = (product: ProductCard, branch: Branch) => {
-    setCart((prev) => {
-      // We now check for uniqueness based on BOTH Product ID and Branch ID
-      const exists = prev.find(
-        (item) => item.id === product.id && item.branch.id === branch.id
-      );
+  const addToCart = async (product: ProductCard, branch: Branch) => {
+    const newItem = { ...product, quantity: 1, branch: branch };
+    
+    // Update State
+    setCart(prev => [...prev, newItem]);
 
-      if (exists) {
-        toast.info(`Quantity updated for ${branch.name} stock`);
-        return prev.map((item) =>
-          item.id === product.id && item.branch.id === branch.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-
-      toast.success(`${product.name} added from ${branch.name}`);
-      return [
-        ...prev,
-        { 
-          ...product, 
-          quantity: 1, 
-          branch: branch
-        },
-      ];
-    });
+    // 2. If logged in, push to Database
+    if (user) {
+      await api.post('/ecommerce/cart/', {
+        product_id: product.id,
+        branch_id: branch.id,
+        quantity: 1
+      });
+    }
+  };
+  const updateQuantity = (id: number, branch: Branch, delta: number) => {
+    setCart((prev) =>
+      prev.map((item) => {
+        if (item.id === id && item.branch.id === branch.id) {
+          const newQty = item.quantity + delta;
+          // Don't allow quantity to go below 1
+          return { ...item, quantity: newQty < 1 ? 1 : newQty };
+        }
+        return item;
+      })
+    );
   };
 
-  const removeFromCart = (id: number) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (id: number, branch: Branch) => {
+    setCart((prev) => 
+      prev.filter((item) => !(item.id === id && item.branch === branch))
+    );
   };
 
   const clearCart = () => {
@@ -73,7 +77,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, cartTotal }}>
+    <CartContext.Provider value={{ cart, addToCart, updateQuantity, removeFromCart, clearCart, cartTotal }}>
       {children}
     </CartContext.Provider>
   );

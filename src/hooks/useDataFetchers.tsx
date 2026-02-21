@@ -7,7 +7,9 @@ import type {
   CategoriesResponse,
   ProductsResponse,
   ProductResponse,
-  CustomerDetailsResponse
+  CustomerDetailsResponse,
+  Branch,
+  OrderWithRelations
 } from '@/lib/types'
 
 export function useBanners() {
@@ -63,7 +65,7 @@ export function useCustomerDetails(id?: string | number) {
 }
 
 export function useBranches() {
-  return useQuery<string[]>({
+  return useQuery<Branch[]>({
     queryKey: ['branches'],
     queryFn: async () => {
       // This endpoint should return: ["Medan Fair", "Sun Plaza", "Binjai Mall", ...]
@@ -74,10 +76,21 @@ export function useBranches() {
 }
 
 export function useOrder(id?: string | number) {
-  return useQuery({
+  return useQuery<OrderWithRelations>({
     queryKey: ['order', id],
     queryFn: async () => {
       const res = await api.get(`/ecommerce/orders/${id}`)
+      return res.data
+    },
+    enabled: !!id
+  })
+}
+
+export function useOrders(id?: string | number) {
+  return useQuery<OrderWithRelations[]>({
+    queryKey: ['orders', id],
+    queryFn: async () => {
+      const res = await api.get(`/ecommerce/orders`);
       return res.data
     },
     enabled: !!id

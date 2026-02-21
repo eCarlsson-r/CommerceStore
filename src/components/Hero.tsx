@@ -22,10 +22,16 @@ export default function Hero({ banners }: { banners: Banner[] }) {
             <CarouselItem key={banner.id || index} className="relative h-[500px]">
               <div className="relative w-full h-full">
                 <Image
-                  src={banner.image_url || "https://placehold.co/900x500/png"}
+                  src={
+                    banner.image_url ? banner.image_url.startsWith("http")
+                      ? banner.image_url
+                      : "http://localhost:8000/storage/" + banner.image_url
+                    : "https://placehold.co/1280x960/png"
+                  }
                   alt={banner.title}
                   fill
                   className="object-cover"
+                  loading="eager"
                   priority={index === 0}
                 />
                 <div className="absolute inset-0 bg-black/20" />

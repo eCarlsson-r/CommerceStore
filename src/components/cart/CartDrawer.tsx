@@ -1,6 +1,5 @@
 // components/cart/CartDrawer.tsx
 "use client";
-
 import { useCart } from "@/context/CartContext";
 import {
   Sheet,
@@ -9,18 +8,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingBag } from "lucide-react";
+import { Minus, Plus, ShoppingBag } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function CartDrawer() {
-  const { cart, cartTotal } = useCart();
+  const { cart, cartTotal, updateQuantity, removeFromCart } = useCart();
 
   return (
     <Sheet>
       <SheetTrigger className="relative p-2">
-        <ShoppingBag className="w-6 h-6 text-gray-900" />
+        <ShoppingBag className="w-6 h-6 text-primary" />
         {cart.length > 0 && (
-          <span className="absolute top-0 right-0 bg-primary text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+          <span className="absolute top-0 right-0 bg-secondary text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
             {cart.length}
           </span>
         )}
@@ -37,7 +37,10 @@ export function CartDrawer() {
           {cart.map((item) => (
             <div key={`${item.id}-${item.branch.id}`} className="flex gap-4 py-4 border-b border-gray-50 last:border-0">
               <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-gray-50">
-                <Image src={item.image} alt={item.name} fill className="object-cover" />
+                <Image src={item.image ? item.image.startsWith("http")
+                    ? item.image
+                    : "http://localhost:8000/storage/" + item.image
+                : "https://placehold.co/200x200/png"} alt={item.name} fill className="object-cover" />
               </div>
               
               <div className="flex-1 flex flex-col justify-between">
@@ -54,7 +57,7 @@ export function CartDrawer() {
                 </div>
                 
                 <div className="flex justify-between items-end mt-2">
-                  <p className="text-sm font-black text-primary">
+                  <p className="text-sm font-black text-secondary">
                     {Number(item.price)
                       .toLocaleString("id-ID", {
                         style: "currency",
@@ -62,8 +65,30 @@ export function CartDrawer() {
                       })
                       .replace(",00", ",-")}
                   </p>
-                  <div className="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded-md">
-                    QTY: {item.quantity}
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => updateQuantity(item.id, item.branch, -1)}
+                      className="flex w-6 h-6 items-center justify-center border rounded-full hover:bg-gray-100"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+
+                    <span className="text-sm font-black">{item.quantity}</span>
+
+                    <button 
+                      onClick={() => updateQuantity(item.id, item.branch, 1)}
+                      className="flex w-6 h-6 items-center justify-center border rounded-full hover:bg-gray-100"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+
+                    {/* REMOVE ITEM */}
+                    <button 
+                      onClick={() => removeFromCart(item.id, item.branch)}
+                      className="ml-4 text-red-500 text-[10px] font-black uppercase hover:underline"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               </div>
@@ -76,7 +101,7 @@ export function CartDrawer() {
             <span className="text-xs font-black uppercase text-gray-400">
               Estimated Total
             </span>
-            <span className="text-xl font-black text-gray-900 italic">
+            <span className="text-xl font-black text-primary italic">
               {Number(cartTotal)
                   .toLocaleString("id-ID", {
                     style: "currency",
@@ -85,9 +110,9 @@ export function CartDrawer() {
                   .replace(",00", ",-")}
             </span>
           </div>
-          <button className="w-full py-5 bg-gray-900 text-white rounded-[2rem] font-black uppercase text-xs shadow-xl shadow-gray-200">
+          <Link href="/checkout" className="block w-full py-5 bg-primary text-white rounded-[2rem] font-black uppercase text-center shadow-xl shadow-gray-200">
             Proceed to Checkout
-          </button>
+          </Link>
         </div>
       </SheetContent>
     </Sheet>

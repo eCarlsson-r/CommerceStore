@@ -21,7 +21,11 @@ export function ImageGallery({
       {/* Main Feature Image */}
       <div className="relative aspect-square w-full overflow-hidden rounded-[3rem] bg-gray-50 border border-gray-100 shadow-inner">
         <Image
-          src={activeImage}
+          src={activeImage
+                ? activeImage.startsWith("http")
+                    ? activeImage
+                    : "http://localhost:8000/storage/" + activeImage
+                : "https://placehold.co/1000x1000/png"}
           alt="Product View"
           fill
           className="object-cover transition-all duration-700 hover:scale-110"

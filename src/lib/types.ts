@@ -60,6 +60,14 @@ export type EmployeeWithRelations = Employee & {
 export type OrderWithRelations = Order & {
   items?: OrderItem[];
   branch?: Branch | null;
+  delivery_details?: {
+    address: string;
+    city: string;
+    postal_code: string;
+  } | null;
+  courier?: string | null;
+  courier_service?: string | null;
+  tracking_number?: string | null;
   customer?: Customer | null;
   sale?: Sale | null;
 };
@@ -149,6 +157,8 @@ export type ProductCard = {
   'image' : string,
   'quantity' : number,
   'discount' : number,
+  'primary_branch'? : Branch | null,
+  'is_out_of_stock' : boolean,
   'since_date' : string,
   'products_sold' : number,
   'number_of_sales' : number,

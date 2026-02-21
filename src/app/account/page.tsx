@@ -6,9 +6,11 @@ import { useAuth } from "@/hooks/useAuth"; // Use our central auth hook
 import { User, Package, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OrderProgress } from "@/components/account/OrderProgress";
+import { useOrders } from "@/hooks/useDataFetchers";
 
 export default function AccountPage() {
   const { user, loading } = useAuth();
+  const { data: orders } = useOrders();
   const [activeTab, setActiveTab] = useState("profile");
 
   if (loading)
@@ -43,7 +45,7 @@ export default function AccountPage() {
             className={cn(
               "w-full flex items-center gap-4 p-4 rounded-2xl text-xs font-black uppercase transition-all",
               activeTab === "profile"
-                ? "bg-gray-900 text-white shadow-xl"
+                ? "bg-primary text-white shadow-xl"
                 : "text-gray-400 hover:bg-gray-50",
             )}
           >
@@ -55,7 +57,7 @@ export default function AccountPage() {
             className={cn(
               "w-full flex items-center gap-4 p-4 rounded-2xl text-xs font-black uppercase transition-all",
               activeTab === "orders"
-                ? "bg-gray-900 text-white shadow-xl"
+                ? "bg-primary text-white shadow-xl"
                 : "text-gray-400 hover:bg-gray-50",
             )}
           >
@@ -150,17 +152,17 @@ export default function AccountPage() {
                 Order History
               </h2>
               <div className="space-y-4">
-              {user?.customer?.orders?.length === 0 ? (
+              {!orders || orders.length === 0 ? (
                   <p className="text-sm font-bold text-gray-400 uppercase">
                     You have no orders yet.
                   </p>
-                ) : user?.customer?.orders?.map(order => (
+                ) : orders.map(order => (
                   <div key={order.id} className="p-6 border border-gray-100 rounded-[2rem] hover:bg-gray-50 transition-all flex flex-wrap justify-between items-center gap-4">
                     <div>
                       <p className="text-[10px] font-black text-primary uppercase">
                         Order #{order.id}
                       </p>
-                      <p className="text-sm font-bold">Gold Wedding Ring - 18k</p>
+                      <p className="text-sm font-bold">{order.items ? order.items[0].product_id : "Unknown Product"}</p>
                       <p className="text-[10px] text-gray-400 uppercase mt-1">
                         Status:{" "}
                         <OrderProgress status={order.status} />

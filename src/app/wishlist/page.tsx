@@ -1,79 +1,33 @@
-export default function Wishlist() {
-  return (
-    <div id="wishlist" className="py-12">
-      <section id="wishlist_items">
-        <div className="container mx-auto px-4">
-          <div className="breadcrumbs mb-10">
-            <ol className="flex bg-transparent p-0 text-text-main text-sm">
-              <li className="mr-2">
-                <a href="#home" data-i18n="home" className="hover:text-primary">
-                  Home
-                </a>
-              </li>
-              <li className="mr-2">/</li>
-              <li className="text-primary" data-i18n="wishlist">
-                Wishlist
-              </li>
-            </ol>
-          </div>
-          <div className="cart_info border border-border-light mb-12 overflow-x-auto">
-            <table
-              id="table-wishlist"
-              className="w-full text-left border-collapse mb-0"
-              data-toggle="table"
-              data-url=""
-              data-query-params="getWishlistItems"
-              data-response-handler="showWishlistItems"
-            >
-              <thead className="bg-primary text-white">
-                <tr>
-                  <th
-                    data-formatter="cart_product"
-                    className="p-4 font-normal w-1/6"
-                  >
-                    &nbsp;&nbsp;<span data-i18n="product">Product</span>
-                  </th>
-                  <th
-                    data-field="product-code"
-                    data-formatter="cart_description"
-                    className="p-4 font-normal w-1/4"
-                  ></th>
-                  <th
-                    data-field="stock-sale-price"
-                    data-formatter="cart_price"
-                    className="p-4 font-normal w-1/6 text-center"
-                  >
-                    <span data-i18n="price">Price</span>
-                  </th>
-                  <th
-                    data-field="quantity"
-                    data-formatter="wishlist_quantity"
-                    data-events="wishlistQuantityAction"
-                    className="p-4 font-normal w-1/6 text-center"
-                  >
-                    <span data-i18n="quantity">Quantity</span>
-                  </th>
-                  <th
-                    data-field="product-total"
-                    data-formatter="cart_total"
-                    className="p-4 font-normal w-1/6 text-center"
-                  >
-                    <span data-i18n="total">Total</span>
-                  </th>
-                  <th
-                    data-events="wishlistActionHandler"
-                    data-formatter="wishlistActionFormatter"
-                    data-cell-style="actionStyle"
-                    className="p-4 font-normal w-1/12 text-center"
-                  ></th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
+import { ProductView } from "@/components/ecommerce/ProductView";
+import { Heart } from "lucide-react";
+import Link from "next/link";
+
+export default function WishlistPage() {
+  const { wishlistItems } = useWishlist(); // Assuming a similar hook
+
+  if (wishlistItems.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 text-center">
+        <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-8">
+          <Heart className="text-gray-200" size={40} />
         </div>
-      </section>{" "}
-      {/*/#wishlist_items*/}
+        <h1 className="text-2xl font-black uppercase italic tracking-tighter">Your Collection Awaits</h1>
+        <p className="text-gray-400 text-sm mt-2 max-w-xs uppercase font-bold tracking-widest leading-loose">
+          Save your favorite pieces from our 11 boutiques to view them later.
+        </p>
+        <Link href="/shop" className="mt-10 px-10 py-4 bg-gray-900 text-white rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary transition-all">
+          Explore Jewelry
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      {/* Map through wishlist items using ProductView */}
+      {wishlistItems.map(item => (
+        <ProductView key={item.id} product={item} />
+      ))}
     </div>
   );
 }

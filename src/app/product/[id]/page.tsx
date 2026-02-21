@@ -8,7 +8,6 @@ import { useProduct } from "@/hooks/useDataFetchers";
 import { useCart } from "@/context/CartContext";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 export default function ProductPage() {
   const params = useParams();
@@ -79,27 +78,8 @@ export default function ProductPage() {
             </div>
           </div>
 
-          <div className="border-t border-b border-gray-100 py-6">
-            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Available at Boutique:</p>
-            <div className="flex flex-wrap gap-2">
-              {productResponse.stocks.map((stock) => (
-                <button
-                  key={stock.branch.id}
-                  disabled={stock.quantity === 0}
-                  onClick={() => setSelectedStock(stock)}
-                  className={cn(
-                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase border-2 transition-all",
-                    selectedStock?.branch.id === stock.branch.id 
-                      ? "border-primary bg-primary/5 text-primary" 
-                      : "border-gray-100 text-gray-400",
-                    stock.quantity === 0 && "opacity-30 cursor-not-allowed"
-                  )}
-                >
-                  {stock.branch.id} ({stock.quantity})
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Branch Availability Section */}
+          <StockAvailability stocks={branchStocks} selectedStock={selectedStock} setSelectedStock={setSelectedStock} />
 
           {/* Call to Action */}
           <div className="flex gap-4">
@@ -110,9 +90,6 @@ export default function ProductPage() {
               <Heart className="w-6 h-6" />
             </Button>
           </div>
-
-          {/* Branch Availability Section */}
-          <StockAvailability stocks={branchStocks} />
         </div>
       </div>
     </div>
