@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { Branch, CartItem, ProductCard } from "@/lib/types";
-import { toast } from "sonner";
 import api from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 // 2. Define the Context interface
 interface CartContextType {
@@ -26,7 +26,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (user) {
       // Fetch cart from Laravel
-      api.get('/ecommerce/cart').then(res => setCart(res.data));
+      api.get('/ecommerce/cart').then(res => setCart("data" in res.data ? res.data.data : res.data));
     } else {
       const saved = localStorage.getItem("shopping_cart");
       if (saved) setCart(JSON.parse(saved));
@@ -34,10 +34,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const addToCart = async (product: ProductCard, branch: Branch) => {
-    const newItem = { ...product, quantity: 1, branch: branch };
-    
-    // Update State
-    setCart(prev => [...prev, newItem]);
+    setCart((prev) => {
+      const existing = prev.find(
+        (item) => item.id === product.id && item.branch.name === branch.name
+      );
+
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id && item.branch.name === branch.name
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1, branch }];
+    });
 
     // 2. If logged in, push to Database
     if (user) {
@@ -48,27 +58,36 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
     }
   };
-  const updateQuantity = (id: number, branch: Branch, delta: number) => {
+
+  const updateQuantity = async (id: number, branch: Branch, delta: number) => {
     setCart((prev) =>
-      prev.map((item) => {
-        if (item.id === id && item.branch.id === branch.id) {
-          const newQty = item.quantity + delta;
-          // Don't allow quantity to go below 1
-          return { ...item, quantity: newQty < 1 ? 1 : newQty };
-        }
-        return item;
-      })
+      prev.map((item) =>
+        item.id === id && item.branch.id === branch.id
+          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+          : item
+      )
     );
+
+    if (user) {
+      // Sync change to Laravel
+      await api.patch(`/ecommerce/cart/${id}`, { delta });
+    }
   };
 
-  const removeFromCart = (id: number, branch: Branch) => {
+  const removeFromCart = async (id: number, branch: Branch) => {
     setCart((prev) => 
-      prev.filter((item) => !(item.id === id && item.branch === branch))
+      prev.filter((item) => !(item.id === id && item.branch.id === branch.id))
     );
+
+    if (user) {
+      await api.delete(`/ecommerce/cart/${id}`);
+    }
+    toast.success("Item removed from bag");
   };
 
   const clearCart = () => {
     setCart([]);
+    localStorage.removeItem("shopping_cart");
   };
 
   const cartTotal = cart.reduce(

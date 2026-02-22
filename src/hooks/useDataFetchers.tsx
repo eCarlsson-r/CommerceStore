@@ -9,7 +9,8 @@ import type {
   ProductResponse,
   CustomerDetailsResponse,
   Branch,
-  OrderWithRelations
+  OrderWithRelations,
+  BranchWithRelations
 } from '@/lib/types'
 
 export function useBanners() {
@@ -65,13 +66,24 @@ export function useCustomerDetails(id?: string | number) {
 }
 
 export function useBranches() {
-  return useQuery<Branch[]>({
+  return useQuery<BranchWithRelations[]>({
     queryKey: ['branches'],
     queryFn: async () => {
       // This endpoint should return: ["Medan Fair", "Sun Plaza", "Binjai Mall", ...]
-      const res = await api.get('/ecommerce/branches')
+      const res = await api.get('/branches');
       return res.data
     }
+  })
+}
+
+export function useBranch(id: string | number) {
+  return useQuery<BranchWithRelations>({
+    queryKey: ['branch', id],
+    queryFn: async () => {
+      const res = await api.get(`/branches/${id}`)
+      return res.data
+    },
+    enabled: !!id
   })
 }
 
@@ -86,13 +98,12 @@ export function useOrder(id?: string | number) {
   })
 }
 
-export function useOrders(id?: string | number) {
+export function useOrders() {
   return useQuery<OrderWithRelations[]>({
-    queryKey: ['orders', id],
+    queryKey: ['orders'],
     queryFn: async () => {
       const res = await api.get(`/ecommerce/orders`);
-      return res.data
-    },
-    enabled: !!id
+      return ("data" in res.data) ? res.data.data : res.data
+    }
   })
 }

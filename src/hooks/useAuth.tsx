@@ -57,6 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     Cookies.remove("auth_token");
+    localStorage.removeItem("shopping_cart");
     setUser(null);
     router.push("/");
   };

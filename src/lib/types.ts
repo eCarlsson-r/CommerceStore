@@ -58,7 +58,7 @@ export type EmployeeWithRelations = Employee & {
 };
 
 export type OrderWithRelations = Order & {
-  items?: OrderItem[];
+  items?: OrderItemWithRelations[];
   branch?: Branch | null;
   delivery_details?: {
     address: string;
@@ -164,6 +164,7 @@ export type ProductCard = {
   'number_of_sales' : number,
   'media'?: Media[];
   'category': Category;
+  'description': string;
 }
 
 // ─── API Response Types ──────────────────────────────────────────────────────

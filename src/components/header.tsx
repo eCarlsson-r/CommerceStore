@@ -4,9 +4,11 @@ import Link from "next/link";
 import { User, Heart, LogOut, Lock, Phone, Mail, Instagram, Facebook } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { CartDrawer } from "./cart/CartDrawer"; // Import the drawer we built
+import { useWishlist } from "@/context/WishlistContext";
 
 export default function Header() {
   const { user, logout } = useAuth();
+  const { wishlist } = useWishlist();
 
   return (
     <header className="w-full bg-white">
@@ -15,10 +17,10 @@ export default function Header() {
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex gap-6 items-center">
             <a href="tel:+2950188821" className="text-[10px] font-black text-gray-400 hover:text-white flex items-center tracking-widest transition-all">
-              <Phone className="w-3 h-3 mr-2 text-primary" /> +2 95 01 88 821
+              <Phone className="w-3 h-3 mr-2 text-primary" /> +82 895 01 88 821
             </a>
             <a href="mailto:info@republican.com" className="hidden sm:flex text-[10px] font-black text-gray-400 hover:text-white items-center tracking-widest transition-all">
-              <Mail className="w-3 h-3 mr-2 text-primary" /> INFO@REPUBLICAN.COM
+              <Mail className="w-3 h-3 mr-2 text-primary" /> commerce@carlssonstudio.com
             </a>
           </div>
           <div className="flex gap-4 items-center">
@@ -46,8 +48,8 @@ export default function Header() {
                   <Image
                     src="/images/logo-text.png"
                     alt="Carlsson Digital Commerce"
-                    width={180}
-                    height={60}
+                    width={218}
+                    height={50}
                   />
                 </div>
               </Link>
@@ -61,8 +63,13 @@ export default function Header() {
                     <User className="w-5 h-5" />
                     <span className="hidden lg:inline text-[10px] font-black uppercase tracking-widest">Account</span>
                   </Link>
-                  <Link href="/wishlist" className="p-2 text-gray-400 hover:text-primary transition-colors relative">
-                    <Heart className="w-5 h-5" />
+                  <Link href="/wishlist" className="relative group">
+                    <Heart size={20} className="text-gray-900 group-hover:text-primary transition-colors" />
+                    {wishlist.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-primary text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in">
+                        {wishlist.length}
+                      </span>
+                    )}
                   </Link>
                   <CartDrawer /> {/* Integrated Cart Drawer */}
                   <button onClick={() => logout()} className="ml-4 p-2 text-red-300 hover:text-red-500 transition-colors">

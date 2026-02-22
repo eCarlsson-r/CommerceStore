@@ -1,77 +1,78 @@
-import Image from "next/image";
+"use client";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { useBranches, useCategories } from "@/hooks/useDataFetchers";
+import { MapPin, Instagram, Phone, Package } from "lucide-react";
 
 export default function Footer() {
+  const { data: branches } = useBranches();
+  const { data: categories } = useCategories();
+
   return (
-    <footer className="bg-white border-t border-gray-50 pt-20">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
-          
-          {/* Brand Story */}
-          <div className="lg:col-span-2 space-y-6">
-            <Image
-              src="/images/logo-text.png"
-              alt="Carlsson Digital Commerce"
-              width={180}
-              height={60}
-            />
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-              Handcrafting eternal beauty for over a decade. Discover our exclusive collections across premium branches in Medan & Binjai.
-            </p>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-6">Collections</h3>
-            <ul className="space-y-4">
-              <li><Link href="/shop?category=rings" className="text-sm text-gray-400 hover:text-primary transition-all">Engagement Rings</Link></li>
-              <li><Link href="/shop?category=necklaces" className="text-sm text-gray-400 hover:text-primary transition-all">Luxury Necklaces</Link></li>
-              <li><Link href="/shop?category=watches" className="text-sm text-gray-400 hover:text-primary transition-all">Timepieces</Link></li>
-              <li><Link href="/shop?category=gift-cards" className="text-sm text-gray-400 hover:text-primary transition-all">Gift Cards</Link></li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-6">Service</h3>
-            <ul className="space-y-4">
-              <li><Link href="/faq" className="text-sm text-gray-400 hover:text-primary transition-all">Online Help</Link></li>
-              <li><Link href="/status" className="text-sm text-gray-400 hover:text-primary transition-all">Order Status</Link></li>
-              <li><Link href="/shipping" className="text-sm text-gray-400 hover:text-primary transition-all">Shipping Policy</Link></li>
-              <li><Link href="/locations" className="text-sm text-gray-400 hover:text-primary transition-all">Store Locations</Link></li>
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div className="space-y-6">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-primary mb-6">Stay Inspired</h3>
-            <div className="relative group">
-              <input 
-                type="email" 
-                placeholder="email@example.com" 
-                className="w-full bg-gray-50 border-none p-4 rounded-2xl text-xs focus:ring-2 ring-primary/20"
-              />
-              <button className="absolute right-2 top-2 bg-primary text-white p-2 rounded-xl hover:scale-105 transition-all">
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-            <p className="text-[10px] text-gray-400 leading-tight">
-              Join our exclusive club for private sale access and new arrivals.
-            </p>
-          </div>
-        </div>
-
-        {/* Bottom Credits */}
-        <div className="border-t border-gray-50 py-10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-            © {new Date().getFullYear()} Republican Jewelry. Handcrafted in Medan.
+    <footer className="bg-white border-t border-gray-100 pt-20 pb-10">
+      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12">
+        
+        {/* Brand Column */}
+        <div className="space-y-6">
+          <Image
+            src="/images/logo-text.png"
+            alt="Carlsson Digital Commerce"
+            width={218}
+            height={50}
+          />  
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] leading-loose">
+            Fine jewelry crafted for the bold. Since 2024, serving the heart of North Sumatra with 11 boutiques.
           </p>
-          <div className="flex gap-8">
-            <Link href="/terms" className="text-[10px] font-black text-gray-300 hover:text-primary uppercase tracking-widest">Terms</Link>
-            <Link href="/privacy" className="text-[10px] font-black text-gray-300 hover:text-primary uppercase tracking-widest">Privacy</Link>
+          <div className="flex gap-4">
+            <Instagram size={18} className="text-gray-400 hover:text-primary cursor-pointer" />
+            <Phone size={18} className="text-gray-400 hover:text-primary cursor-pointer" />
           </div>
         </div>
+
+        {/* Boutiques Column */}
+        <div>
+          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">Our Boutiques</h3>
+          <div className="grid gap-y-3 gap-x-4">
+            {branches?.map((branch, index) => index < 5 && (
+              <Link key={branch.id} href={`/locations/${branch.id}`} className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase hover:text-primary transition-colors cursor-pointer">
+                <MapPin size={10} /> {branch.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Categories Column */}
+        <div>
+          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">Our Categories</h3>
+          <div className="grid gap-y-3 gap-x-4">
+            {categories?.map((category, index) => index < 5 && (
+              <Link href={`/shop?category=${category.slug}`} key={category.id} className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase hover:text-primary transition-colors cursor-pointer">
+                <Package size={10} /> {category.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Client Care */}
+        <div>
+          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">Client Care</h3>
+          <ul className="space-y-4 text-[10px] font-bold text-gray-500 uppercase">
+            <li className="hover:text-primary cursor-pointer">
+              <Link href="/wishlist">My Wishlist</Link>
+            </li>
+            <li className="hover:text-primary cursor-pointer">Shipping & Returns</li>
+            <li className="hover:text-primary cursor-pointer">Authenticity Guarantee</li>
+            <li className="hover:text-primary cursor-pointer">
+              <Link href="/locations">Visit our Branches</Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 mt-20 pt-8 border-t border-gray-50 text-center">
+        <p className="text-[8px] font-black text-gray-300 uppercase tracking-widest">
+          &copy; 2026 Carlsson Digital Commerce. All Rights Reserved.
+        </p>
       </div>
     </footer>
   );

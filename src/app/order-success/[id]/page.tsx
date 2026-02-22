@@ -3,12 +3,11 @@ import { useOrder } from "@/hooks/useDataFetchers";
 import { useParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import Link from "next/link";
-import { Check, Truck, Store, MapPin, Clock } from "lucide-react";
+import { Check, Truck, Store, MapPin, Clock, MessageSquare } from "lucide-react";
 
 export default function OrderSuccessPage() {
   const { id } = useParams();
   const { data: order, isLoading } = useOrder(id as string);
-  console.info(order);
 
   if (isLoading) return <div className="p-20 text-center uppercase font-black animate-pulse">Verifying Transaction...</div>;
   if (!order) return <div className="p-20 text-center font-black">ORDER NOT FOUND</div>;
@@ -30,12 +29,11 @@ export default function OrderSuccessPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left Side: Order QR or Shipping Status */}
         <div className="bg-gray-50 rounded-[3rem] p-10 flex flex-col items-center justify-center text-center">
           {isPickup ? (
             <>
               <div className="p-4 rounded-3xl mb-6">
-                <QRCodeSVG value={`ORDER-${id}`} size={160} level="H" />
+                <QRCodeSVG value={order.order_number} size={160} level="H" />
               </div>
               <p className="text-[10px] font-black uppercase tracking-widest text-primary">Scan at Boutique</p>
               <p className="text-xs text-gray-400 mt-2">Show this to the store manager in {order.branch?.name}</p>
@@ -52,7 +50,6 @@ export default function OrderSuccessPage() {
           )}
         </div>
 
-        {/* Right Side: Details */}
         <div className="bg-gray-900 text-white rounded-[3rem] p-10 space-y-8">
           <div>
             <h3 className="text-[10px] font-black uppercase text-gray-400 mb-4 flex items-center gap-2">
@@ -86,6 +83,19 @@ export default function OrderSuccessPage() {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="mt-16 pt-12 border-t border-gray-100 text-center">
+        <h3 className="text-lg font-black uppercase italic tracking-tighter italic">Cherish your piece?</h3>
+        <p className="text-[10px] text-gray-400 font-bold uppercase mt-2 tracking-widest leading-loose">
+          Share your experience once you have received your jewelry.
+        </p>
+        <Link 
+          href={`/account/orders/${id}`} 
+          className="inline-flex items-center gap-2 mt-8 px-10 py-4 bg-gray-900 text-white rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary transition-all"
+        >
+          <MessageSquare size={14} /> Write a Review
+        </Link>
       </div>
 
       <div className="mt-12 text-center">

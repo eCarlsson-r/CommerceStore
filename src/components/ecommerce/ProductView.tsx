@@ -5,9 +5,14 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
+import { Heart } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useWishlist } from "@/context/WishlistContext";
 
 export function ProductView({ product }: { product: ProductCard }) {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const active = isInWishlist(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     // Prevent the click from triggering the Link wrapper if you add one
@@ -72,6 +77,22 @@ export function ProductView({ product }: { product: ProductCard }) {
           className="mt-6 w-full py-6 bg-primary text-white rounded-xl text-[10px] font-black uppercase hover:bg-secondary transition-all active:scale-95"
         >
           Add to Bag
+        </Button>
+
+        <Button 
+          onClick={(e) => {
+            e.preventDefault();
+            toggleWishlist(product);
+          }}
+          className="absolute top-4 right-4 z-10 p-2 bg-white/80 backdrop-blur-md rounded-full shadow-sm hover:scale-110 transition-all"
+        >
+          <Heart 
+            size={18} 
+            className={cn(
+              "transition-colors", 
+              active ? "fill-red-500 text-red-500" : "text-gray-400"
+            )} 
+          />
         </Button>
       </div>
     </div>
