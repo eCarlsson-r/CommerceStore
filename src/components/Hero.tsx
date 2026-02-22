@@ -25,7 +25,7 @@ export default function Hero({ banners }: { banners: Banner[] }) {
                   src={
                     banner.image_url ? banner.image_url.startsWith("http")
                       ? banner.image_url
-                      : "http://localhost:8000/storage/" + banner.image_url
+                      : process.env.NEXT_PUBLIC_API_URL + banner.image_url
                     : "https://placehold.co/1280x960/png"
                   }
                   alt={banner.title}

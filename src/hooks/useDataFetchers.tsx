@@ -70,7 +70,7 @@ export function useBranches() {
     queryKey: ['branches'],
     queryFn: async () => {
       // This endpoint should return: ["Medan Fair", "Sun Plaza", "Binjai Mall", ...]
-      const res = await api.get('/branches');
+      const res = await api.get('/ecommerce/branches');
       return res.data
     }
   })

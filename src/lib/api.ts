@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
+    baseURL: (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000") + "/api",
     headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -29,10 +29,7 @@ api.interceptors.response.use(
         const message = error.response?.data?.message || error.message || "An error occurred";
 
         if (error.response?.status === 401) {
-            if (!isServer) {
-                Cookies.remove("auth_token");
-                window.location.href = "/login";
-            }
+            if (!isServer) Cookies.remove("auth_token");
         } else {
             // Only show toasts if we are in the browser
             if (!isServer) {

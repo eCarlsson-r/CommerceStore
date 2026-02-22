@@ -37,8 +37,23 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     try {
       const registration = await navigator.serviceWorker.register("/sw.js", {
         scope: "/",
-        updateViaCache: "none",
       });
+
+      // Listen for updates
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New content available, but don't force refresh in dev
+              if (process.env.NODE_ENV !== 'development') {
+                window.location.reload();
+              }
+            }
+          });
+        }
+      });
+
       const sub = await registration.pushManager.getSubscription();
       setSubscription(sub);
     } catch (error) {
@@ -50,6 +65,8 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     if ("serviceWorker" in navigator && "PushManager" in window) {
       setIsSupported(true);
       registerServiceWorker();
+    } else {
+      console.log('PWA: Service Worker or Push Manager not supported');
     }
   }, []);
 

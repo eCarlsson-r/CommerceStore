@@ -50,9 +50,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (token: string) => {
-    Cookies.set("auth_token", token, { expires: 7, secure: true });
+    Cookies.set("auth_token", token, { expires: 7, secure: process.env.NODE_ENV === 'production' });
     await fetchUser();
-    if (user) router.push("/account/");
+    // Redirect after successful login - user state will be updated by fetchUser
+    router.push("/account/");
   };
 
   const logout = () => {

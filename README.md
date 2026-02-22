@@ -34,12 +34,13 @@ Built with **Next.js 15** and **Tailwind CSS 4**, it combines server-side render
 - **User Accounts**: Login/signup with order history, saved addresses, and wishlist functionality.
 - **Customer Profiles**: Track account settings, shipping preferences, and loyalty rewards.
 - **Order Management**: View all past orders with receipts, batch reorders, and return requests.
+- **Push Notifications**: Real-time alerts for order status updates, shipping confirmations, and special offers.
 - **Wishlist**: Save favorite products for later purchase or price drop notifications.
 
 ### 📱 Responsive & Progressive
 
 - **Mobile-First Design**: Optimized for all devices—phones, tablets, and desktops.
-- **Progressive Web App (PWA)**: Offline browsing, installable as an app, push notifications for order updates.
+- **Progressive Web App (PWA)**: Offline browsing, installable as an app, push notifications for order updates, and service worker caching.
 - **Accessibility First**: WCAG 2.1 AA compliance ensuring inclusivity for all users.
 
 ### 📊 Business Intelligence
@@ -87,7 +88,7 @@ Built to impress with cutting-edge web standards and performance optimization:
     Create a `.env.local` file in the root directory:
 
     ```env
-    NEXT_PUBLIC_API_URL=http://localhost:8000/api
+    NEXT_PUBLIC_API_URL=http://localhost:8000
     NODE_ENV=development
     ```
 

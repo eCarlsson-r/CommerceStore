@@ -5,6 +5,7 @@ import { User, Heart, LogOut, Lock, Phone, Mail, Instagram, Facebook } from "luc
 import { useAuth } from "@/hooks/useAuth";
 import { CartDrawer } from "./cart/CartDrawer"; // Import the drawer we built
 import { useWishlist } from "@/context/WishlistContext";
+import { NotificationToggle } from "./ui/notification-toggle";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -59,6 +60,7 @@ export default function Header() {
             <nav className="flex items-center gap-2 sm:gap-6">
               {user ? (
                 <>
+                  <NotificationToggle />
                   <Link href="/account/" className="p-2 text-gray-400 hover:text-primary transition-colors flex items-center gap-2">
                     <User className="w-5 h-5" />
                     <span className="hidden lg:inline text-[10px] font-black uppercase tracking-widest">Account</span>

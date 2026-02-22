@@ -24,7 +24,7 @@ export function ImageGallery({
           src={activeImage
                 ? activeImage.startsWith("http")
                     ? activeImage
-                    : "http://localhost:8000/storage/" + activeImage
+                    : process.env.NEXT_PUBLIC_API_URL + activeImage
                 : "https://placehold.co/1000x1000/png"}
           alt="Product View"
           fill

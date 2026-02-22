@@ -39,7 +39,7 @@ export function CartDrawer() {
               <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-gray-50">
                 <Image src={item.image ? item.image.startsWith("http")
                     ? item.image
-                    : "http://localhost:8000/storage/" + item.image
+                    : process.env.NEXT_PUBLIC_API_URL + item.image
                 : "https://placehold.co/200x200/png"} alt={item.name} fill className="object-cover" />
               </div>
               

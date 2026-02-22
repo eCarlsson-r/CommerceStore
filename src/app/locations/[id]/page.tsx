@@ -4,6 +4,7 @@ import { useBranch } from "@/hooks/useDataFetchers"; // You'll need to add this 
 import { MapPin, Phone, Clock } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ImageGallery } from "@/components/product/ImageGallery";
 
 export default function BranchLocationPage() {
   const params = useParams();
@@ -60,16 +61,13 @@ export default function BranchLocationPage() {
 
         {/* This could be a static image of the mall or a Google Maps Embed */}
         <div className="bg-gray-100 rounded-[4rem] overflow-hidden relative">
-           <Image 
-             src={
+          <ImageGallery items={branch?.media || []} mainImage={
               branch?.media?.[0]?.path
                 ? branch?.media?.[0]?.path.startsWith("http")
                     ? branch?.media?.[0]?.path
-                    : "http://localhost:8000/storage/" + branch?.media?.[0]?.path
+                    : process.env.NEXT_PUBLIC_API_URL + branch?.media?.[0]?.path
                 : "https://placehold.co/600x400/png"
               }
-             className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
-             alt={branch?.name || ""} width={600} height={400}
            />
         </div>
       </div>

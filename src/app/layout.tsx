@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { PWAProvider } from "@/components/pwa/PWAManager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,16 +37,18 @@ export default function RootLayout({
       >
         <QueryProvider>
           <AuthProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <Header />
-                <main className="min-h-screen container mx-auto px-4">
-                  {children}
-                </main>
-                <Footer />
-                <Toaster position="top-right" richColors />
-              </WishlistProvider>
-            </CartProvider>
+            <PWAProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <Header />
+                  <main className="min-h-screen container mx-auto px-4">
+                    {children}
+                  </main>
+                  <Footer />
+                  <Toaster position="top-right" richColors />
+                </WishlistProvider>
+              </CartProvider>
+            </PWAProvider>
           </AuthProvider>
         </QueryProvider>
       </body>
