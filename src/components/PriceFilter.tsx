@@ -1,7 +1,7 @@
 "use client";
 
 import { Slider } from "@/components/ui/slider";
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 
 export function PriceFilter({
   onCommit,
@@ -16,12 +16,7 @@ export function PriceFilter({
   currentMin: number;
   currentMax: number;
 }) {
-  // Local state for immediate UI feedback while dragging
-  const [range, setRange] = useState([currentMin, currentMax]);
-
-  useEffect(() => {
-    setRange([currentMin, currentMax]);
-  }, [currentMin, currentMax]);
+  const range = useMemo(() => [currentMin, currentMax], [currentMin, currentMax]);
 
   const dynamicStep = (maxPrice - minPrice) / 100;
 
@@ -32,7 +27,7 @@ export function PriceFilter({
         min={minPrice}
         max={maxPrice}
         step={dynamicStep}
-        onValueChange={setRange}
+        onValueChange={onCommit}
         onValueCommit={onCommit}
         className="py-4"
       />

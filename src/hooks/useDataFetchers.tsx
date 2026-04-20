@@ -8,7 +8,6 @@ import type {
   ProductsResponse,
   ProductResponse,
   CustomerDetailsResponse,
-  Branch,
   OrderWithRelations,
   BranchWithRelations
 } from '@/lib/types'

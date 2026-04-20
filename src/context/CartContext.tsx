@@ -20,17 +20,19 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth(); // Assume you have an Auth hook
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
+    const saved = localStorage.getItem("shopping_cart");
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  // 1. Initial Load: Local for guests, API for users
+  // 1. Initial Load for authenticated users from API
   useEffect(() => {
-    if (user) {
-      // Fetch cart from Laravel
-      api.get('/ecommerce/cart').then(res => setCart("data" in res.data ? res.data.data : res.data));
-    } else {
-      const saved = localStorage.getItem("shopping_cart");
-      if (saved) setCart(JSON.parse(saved));
-    }
+    if (!user) return;
+    // Fetch cart from Laravel
+    api
+      .get('/ecommerce/cart')
+      .then((res) => setCart("data" in res.data ? res.data.data : res.data));
   }, [user]);
 
   const addToCart = async (product: ProductCard, branch: Branch) => {

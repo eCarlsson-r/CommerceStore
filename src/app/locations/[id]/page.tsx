@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useBranch } from "@/hooks/useDataFetchers"; // You'll need to add this hook
 import { MapPin, Phone, Clock } from "lucide-react";
 import { useParams } from "next/navigation";

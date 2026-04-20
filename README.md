@@ -100,6 +100,24 @@ Built to impress with cutting-edge web standards and performance optimization:
 
 ---
 
+## 🧱 Wallpaper Store Architecture Artifacts
+
+The implementation plan for wallpaper-specific preview + AI integration is captured in:
+
+- `docs/wallpaper-store-implementation.md`
+
+Key technical contracts added for execution:
+
+- `src/lib/preview/types.ts` for non-GenAI wall preview request/response models.
+- `src/lib/offline/contracts.ts` for offline queue and sync conflict semantics.
+- `src/lib/ai/types.ts` and `src/lib/ai/client.ts` for Laravel AI Kit endpoint integration.
+- `src/lib/i18n/contracts.ts` for localization and translation-draft task models.
+- `src/lib/analytics/ai-kpis.ts` for AI rollout KPI definitions and baseline structure.
+
+These files are intended to align frontend implementation with Laravel backend endpoints and phased AI rollout.
+
+---
+
 ## 💻 Development Commands
 
 | Command           | Description                              |
