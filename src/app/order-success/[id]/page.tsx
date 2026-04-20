@@ -20,7 +20,7 @@ export default function OrderSuccessPage() {
         <div className="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-100">
           <Check size={40} strokeWidth={3} />
         </div>
-        <h1 className="text-4xl font-black uppercase italic tracking-tighter italic">
+        <h1 className="text-4xl font-black uppercase italic tracking-tighter">
           {isPickup ? "Order Reserved" : "Shipment Initialized"}
         </h1>
         <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">
@@ -86,7 +86,7 @@ export default function OrderSuccessPage() {
       </div>
 
       <div className="mt-16 pt-12 border-t border-gray-100 text-center">
-        <h3 className="text-lg font-black uppercase italic tracking-tighter italic">Cherish your piece?</h3>
+        <h3 className="text-lg font-black uppercase italic tracking-tighter">Cherish your piece?</h3>
         <p className="text-[10px] text-gray-400 font-bold uppercase mt-2 tracking-widest leading-loose">
           Share your experience once you have received your jewelry.
         </p>

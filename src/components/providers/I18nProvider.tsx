@@ -1,0 +1,18 @@
+'use client';
+
+import { ReactNode } from 'react';
+import { IntlProvider } from 'next-intl';
+
+type Props = {
+  children: ReactNode;
+  locale: string;
+  messages: Record<string, any>;
+};
+
+export function I18nProvider({ children, locale, messages }: Props) {
+  return (
+    <IntlProvider locale={locale} messages={messages} timeZone="UTC">
+      {children}
+    </IntlProvider>
+  );
+}

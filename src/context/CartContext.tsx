@@ -5,6 +5,7 @@ import { Branch, CartItem, ProductCard } from "@/lib/types";
 import api from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { enqueueOfflineMutation } from "@/lib/offline/queue";
 
 // 2. Define the Context interface
 interface CartContextType {
@@ -35,6 +36,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       .then((res) => setCart("data" in res.data ? res.data.data : res.data));
   }, [user]);
 
+  useEffect(() => {
+    localStorage.setItem("shopping_cart", JSON.stringify(cart));
+  }, [cart]);
+
   const addToCart = async (product: ProductCard, branch: Branch) => {
     setCart((prev) => {
       const existing = prev.find(
@@ -53,11 +58,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     // 2. If logged in, push to Database
     if (user) {
-      await api.post('/ecommerce/cart/', {
+      const payload = {
         product_id: product.id,
         branch_id: branch.id,
-        quantity: 1
-      });
+        quantity: 1,
+      };
+
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        enqueueOfflineMutation({
+          idempotencyKey: `cart.add_item:${product.id}:${branch.id}:${Date.now()}`,
+          type: "cart.add_item",
+          payload,
+        });
+        toast.info("Saved offline. Will sync once online.");
+        return;
+      }
+
+      try {
+        await api.post('/ecommerce/cart/', payload);
+      } catch {
+        enqueueOfflineMutation({
+          idempotencyKey: `cart.add_item:${product.id}:${branch.id}:${Date.now()}`,
+          type: "cart.add_item",
+          payload,
+        });
+        toast.warning("Unable to sync now. Queued for retry.");
+      }
     }
   };
 
@@ -71,8 +97,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
 
     if (user) {
-      // Sync change to Laravel
-      await api.patch(`/ecommerce/cart/${id}`, { delta });
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        enqueueOfflineMutation({
+          idempotencyKey: `cart.update_quantity:${id}:${branch.id}:${Date.now()}`,
+          type: "cart.update_quantity",
+          payload: { product_id: id, branch_id: branch.id, delta },
+        });
+        return;
+      }
+      try {
+        const cartItem = cart.find(
+          (item) => item.id === id && item.branch.id === branch.id,
+        );
+        const cartItemId = cartItem?.cart_item_id;
+        if (!cartItemId) throw new Error("Missing cart item id for sync.");
+        await api.patch(`/ecommerce/cart/${cartItemId}`, { delta });
+      } catch {
+        enqueueOfflineMutation({
+          idempotencyKey: `cart.update_quantity:${id}:${branch.id}:${Date.now()}`,
+          type: "cart.update_quantity",
+          payload: {
+            product_id: id,
+            branch_id: branch.id,
+            cart_item_id: cart.find(
+              (item) => item.id === id && item.branch.id === branch.id,
+            )?.cart_item_id,
+            delta,
+          },
+        });
+      }
     }
   };
 
@@ -82,7 +135,34 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
 
     if (user) {
-      await api.delete(`/ecommerce/cart/${id}`);
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        const cartItemId = cart.find(
+          (item) => item.id === id && item.branch.id === branch.id,
+        )?.cart_item_id;
+        enqueueOfflineMutation({
+          idempotencyKey: `cart.remove_item:${id}:${branch.id}:${Date.now()}`,
+          type: "cart.remove_item",
+          payload: { product_id: id, branch_id: branch.id, cart_item_id: cartItemId },
+        });
+      } else {
+        try {
+          const cartItem = cart.find(
+            (item) => item.id === id && item.branch.id === branch.id,
+          );
+          const cartItemId = cartItem?.cart_item_id;
+          if (!cartItemId) throw new Error("Missing cart item id for sync.");
+          await api.delete(`/ecommerce/cart/${cartItemId}`);
+        } catch {
+          const cartItemId = cart.find(
+            (item) => item.id === id && item.branch.id === branch.id,
+          )?.cart_item_id;
+          enqueueOfflineMutation({
+            idempotencyKey: `cart.remove_item:${id}:${branch.id}:${Date.now()}`,
+            type: "cart.remove_item",
+            payload: { product_id: id, branch_id: branch.id, cart_item_id: cartItemId },
+          });
+        }
+      }
     }
     toast.success("Item removed from bag");
   };

@@ -9,6 +9,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { PWAProvider } from "@/components/pwa/PWAManager";
+import OfflineSyncManager from "@/components/offline/OfflineSyncManager";
+import { FloatingAssistantWidget } from "@/components/ai/FloatingAssistantWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,11 +42,13 @@ export default function RootLayout({
             <PWAProvider>
               <CartProvider>
                 <WishlistProvider>
+                  <OfflineSyncManager />
                   <Header />
                   <main className="min-h-screen container mx-auto px-4">
                     {children}
                   </main>
                   <Footer />
+                  <FloatingAssistantWidget />
                   <Toaster position="top-right" richColors />
                 </WishlistProvider>
               </CartProvider>

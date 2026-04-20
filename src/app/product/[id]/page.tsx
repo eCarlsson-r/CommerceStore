@@ -2,7 +2,7 @@
 
 import { ImageGallery } from "@/components/product/ImageGallery";
 import { StockAvailability } from "@/components/product/StockAvailability";
-import { Heart, Info, Link, MapPin } from "lucide-react";
+import { Heart, Info, Link as LinkIcon, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProduct } from "@/hooks/useDataFetchers";
 import { useCart } from "@/context/CartContext";
@@ -10,6 +10,9 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useWishlist } from "@/context/WishlistContext";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { WallpaperPreviewPanel } from "@/components/product/WallpaperPreviewPanel";
+import { ProductAIInsights } from "@/components/ai/ProductAIInsights";
 
 export default function ProductPage() {
   const params = useParams();
@@ -133,6 +136,9 @@ export default function ProductPage() {
             {product.description}
           </p>
 
+          <WallpaperPreviewPanel productId={product.id} />
+          <ProductAIInsights productId={product.id} productName={product.name} />
+
           {/* Footer of PDP: Authenticity Guarantee */}
           <div className="pt-8 border-t border-gray-100 flex gap-6">
              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter">
@@ -143,7 +149,7 @@ export default function ProductPage() {
              </div>
              {/* Link to the Locations Page */}
              <Link href="/locations" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter hover:text-primary transition-colors">
-                <MapPin size={12}/> Visit Our Branches
+                <LinkIcon size={12}/> Visit Our Branches
              </Link>
           </div>
         </div>

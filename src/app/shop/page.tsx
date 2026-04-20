@@ -1,14 +1,13 @@
 import { getProducts, getCategories } from "@/lib/data-fetchers";
-import Sidebar from "@/components/Sidebar";
-import { ProductGrid } from "@/components/ecommerce/ProductGrid";
+import { ShopPageClient } from "@/components/shop/ShopPageClient";
 
 export default async function ShopPage({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string; max_price?: string }>;
 }) {
-  // searchParams automatically contains { category: 'rings', max_price: '5000000' }
-  const products = await getProducts(await searchParams);
+  const params = await searchParams;
+  const products = await getProducts(params);
   const categories = await getCategories();
 
   const priceBounds = {
@@ -16,19 +15,14 @@ export default async function ShopPage({
     max: products.max_price,
   };
 
+  const categoryName = params.category || "Our Collection";
+
   return (
-    <div className="flex flex-col lg:flex-row gap-10 my-10">
-      <Sidebar categories={categories} priceBounds={priceBounds} />
-
-      <main className="flex-1">
-        <header className="mb-10">
-          <h1 className="text-3xl font-black uppercase italic tracking-tighter">
-            {(await searchParams).category || "Our Collection"}
-          </h1>
-        </header>
-
-        <ProductGrid products={products.products} />
-      </main>
-    </div>
+    <ShopPageClient
+      categories={categories}
+      priceBounds={priceBounds}
+      initialProducts={products.products}
+      categoryName={categoryName}
+    />
   );
 }

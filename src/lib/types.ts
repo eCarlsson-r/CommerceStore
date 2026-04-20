@@ -190,6 +190,7 @@ export type CustomerDetailsResponse = CustomerWithRelations;
 
 // Updated types in context/CartContext.tsx or lib/types.ts
 export interface CartItem extends ProductCard {
+  cart_item_id?: number;
   quantity: number;
   branch: Branch;   // Use ID for precise matching
 }

@@ -1,17 +1,21 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Category } from "@/lib/types";
+import { Category, ProductCard } from "@/lib/types";
 import { PriceFilter } from "./PriceFilter";
-import { cn } from "@/lib/utils"; // Shadcn utility for cleaner class merging
+import { VisualSearchBar } from "./ai/VisualSearchBar";
+import { cn } from "@/lib/utils";
 import SearchBox from "./SearchBox";
 
 export default function Sidebar({
   categories,
-  priceBounds = { min: 0, max: 10000000 }, // Default fallback
+  priceBounds = { min: 0, max: 10000000 },
+  onVisualSearchResults,
 }: {
   categories: Category[];
   priceBounds: { min: number; max: number };
+  onVisualSearchResults?: (products: ProductCard[], hasVisualSearch: boolean) => void;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,32 +23,59 @@ export default function Sidebar({
   const safeMin = Number(priceBounds?.min) || 0;
   const safeMax = Number(priceBounds?.max) || 10000000;
 
-  const currentMin = Number(searchParams.get("min_price")) || safeMin;
-  const currentMax = Number(searchParams.get("max_price")) || safeMax;
+  const [value, setValue] = useState<[number, number]>([
+    Number(searchParams.get("min_price")) || safeMin, 
+    Number(searchParams.get("max_price")) || safeMax
+  ]);
 
   const activeCategory = searchParams.get("category") || "";
 
-  const handlePriceCommit = (values: number[]) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("min_price", values[0].toString());
-    params.set("max_price", values[1].toString());
-    router.push(`/shop?${params.toString()}`);
-  };
+  const handlePriceCommit = useCallback(
+    (values: number[]) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("min_price", values[0].toString());
+      params.set("max_price", values[1].toString());
+      router.push(`/shop?${params.toString()}`);
+    },
+    [searchParams, router]
+  );
 
-  const updateFilter = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    // We navigate to /shop (or /catalog) with the new params
-    router.push(`/shop?${params.toString()}`);
-  };
+  const updateFilter = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+      router.push(`/shop?${params.toString()}`);
+    },
+    [searchParams, router]
+  );
+
+  const handleVisualSearchResolved = useCallback(
+    (products: ProductCard[]) => {
+      onVisualSearchResults?.(products, true);
+    },
+    [onVisualSearchResults]
+  );
+
+  const handleVisualSearchClear = useCallback(() => {
+    onVisualSearchResults?.([], false);
+  }, [onVisualSearchResults]);
 
   return (
     <aside className="w-full lg:w-64 space-y-10 pr-0 lg:pr-8">
       <SearchBox />
+
+      {/* Visual Search */}
+      <div className="border-b pb-8">
+        <VisualSearchBar
+          renderInlineResults={false}
+          onProductsResolved={handleVisualSearchResolved}
+          onClearVisualSearch={handleVisualSearchClear}
+        />
+      </div>
 
       <div>
         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-6">
@@ -96,8 +127,8 @@ export default function Sidebar({
         <PriceFilter
           minPrice={safeMin}
           maxPrice={safeMax}
-          currentMin={currentMin}
-          currentMax={currentMax}
+          value={value}
+          onChange={setValue}
           onCommit={handlePriceCommit}
         />
         {searchParams.get("min_price") && searchParams.get("max_price") && (
