@@ -1,4 +1,4 @@
-import api from "./api";
+import api from "../api";
 
 type KPICategory = "commercial" | "operational" | "governance";
 type KPIMetric = string;
