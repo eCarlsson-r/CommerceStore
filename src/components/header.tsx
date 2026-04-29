@@ -20,17 +20,17 @@ export default function Header() {
       <div className="bg-primary py-2">
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex gap-6 items-center">
-            <a href="tel:+2950188821" className="font-black text-gray-400 hover:text-white flex items-center tracking-widest transition-all">
-              <Phone className="w-5 h-5 mr-2 text-primary" /> +82 895 01 88 821
+            <a href="tel:+2950188821" className="text-[10px] font-black text-gray-400 hover:text-white flex items-center tracking-widest transition-all">
+              <Phone className="w-3 h-3 mr-2 text-primary" /> +82 895 01 88 821
             </a>
-            <a href="mailto:info@republican.com" className="hidden sm:flex font-black text-gray-400 hover:text-white items-center tracking-widest transition-all">
-              <Mail className="w-5 h-5 mr-2 text-primary" /> commerce@carlssonstudio.com
+            <a href="mailto:info@republican.com" className="text-[10px] hidden sm:flex font-black text-gray-400 hover:text-white items-center tracking-widest transition-all">
+              <Mail className="w-3 h-3 mr-2 text-primary" /> commerce@carlssonstudio.com
             </a>
           </div>
           <div className="flex gap-4 items-center">
             <LocaleSwitcher />
-            <Instagram className="w-5 h-5 text-gray-400 hover:text-primary cursor-pointer" />
-            <Facebook className="w-5 h-5 text-gray-400 hover:text-primary cursor-pointer" />
+            <Instagram className="w-3 h-3 text-gray-400 hover:text-primary cursor-pointer" />
+            <Facebook className="w-3 h-3 text-gray-400 hover:text-primary cursor-pointer" />
           </div>
         </div>
       </div>

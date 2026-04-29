@@ -33,18 +33,33 @@ export async function getProduct(id: string): Promise<ProductResponse> {
 }
 
 export async function getBanners(): Promise<BannersResponse> {
-    const res = await api.get('/ecommerce/banners');
-    return res.data;
+    try {
+        const res = await api.get('/ecommerce/banners');
+        return res.data;
+    } catch (error) {
+        console.error('Error fetching banners:', error);
+        return [];
+    }
 }
 
 export async function getCategories(): Promise<CategoriesResponse> {
-    const res = await api.get('/ecommerce/categories');
-    return res.data;
+    try {
+        const res = await api.get('/ecommerce/categories');
+        return res.data;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        return [];
+    }
 }
 
 export async function getCustomerDetails(id: string): Promise<CustomerDetailsResponse> {
-    const res = await api.get(`/customers/${id}`);
-    return res.data;
+    try {
+        const res = await api.get(`/customers/${id}`);
+        return res.data;
+    } catch (error) {
+        console.error(`Error fetching customer ${id}:`, error);
+        throw error;
+    }
 }
 
 // Re-export client hooks so pages/components can import from the same module

@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLocale } from 'next-intl';
 import { Category, ProductCard } from "@/lib/types";
 import { PriceFilter } from "./PriceFilter";
 import { VisualSearchBar } from "./ai/VisualSearchBar";
@@ -19,6 +20,7 @@ export default function Sidebar({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale();
 
   const safeMin = Number(priceBounds?.min) || 0;
   const safeMax = Number(priceBounds?.max) || 10000000;
@@ -33,11 +35,11 @@ export default function Sidebar({
   const handlePriceCommit = useCallback(
     (values: number[]) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set("min_price", values[0].toString());
-      params.set("max_price", values[1].toString());
-      router.push(`/shop?${params.toString()}`);
+      params.set("min_price", Math.round(values[0]).toString());
+      params.set("max_price", Math.round(values[1]).toString());
+      router.push(`/${locale}/shop?${params.toString()}`);
     },
-    [searchParams, router]
+    [searchParams, router, locale]
   );
 
   const updateFilter = useCallback(
@@ -48,9 +50,9 @@ export default function Sidebar({
       } else {
         params.delete(key);
       }
-      router.push(`/shop?${params.toString()}`);
+      router.push(`/${locale}/shop?${params.toString()}`);
     },
-    [searchParams, router]
+    [searchParams, router, locale]
   );
 
   const handleVisualSearchResolved = useCallback(

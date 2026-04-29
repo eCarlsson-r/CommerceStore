@@ -84,6 +84,16 @@
     "shippingPolicy": "Shipping Policy",
     "allRightsReserved": "All Rights Reserved"
   },
+  "locations": {
+    "ourLocations": "Our Locations",
+    "visitOutlets": "Visit our outlets at the following locations.",
+    "openingHours": "Opening Hours",
+    "address": "Address",
+    "storeHours": "Store Hours",
+    "contact": "Contact Boutique",
+    "getDirections": "Get Directions",
+    "loading": "Loading Boutique..."
+  },
   "assistant": {
     "askQuestion": "Ask a question",
     "sendMessage": "Send",

@@ -1,17 +1,34 @@
 import { getProducts, getCategories } from "@/lib/data-fetchers";
 import Sidebar from "@/components/Sidebar";
 import { ShopResultsClient } from "@/components/shop/ShopResultsClient";
-import { getTranslations } from 'next-intl/server';
+import enMessages from '../../../../messages/en.json';
+import idMessages from '../../../../messages/id.json';
+
+const messagesByLocale: Record<string, any> = {
+  en: enMessages,
+  id: idMessages,
+};
 
 export default async function ShopPage({
+  params,
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; max_price?: string }>;
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ category?: string; min_price?: string; max_price?: string }>;
 }) {
-  const t = await getTranslations('product');
-  const params = await searchParams;
+  const { locale } = await params;
+  const messages = messagesByLocale[locale] || enMessages;
+  const t = (key: string) => {
+    const keys = key.split('.');
+    let value = messages;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return value || key;
+  };
+  const sparams = await searchParams;
   
-  const products = await getProducts(params);
+  const products = await getProducts(sparams);
   const categories = await getCategories();
 
   const priceBounds = {
@@ -26,7 +43,7 @@ export default async function ShopPage({
       <main className="flex-1">
         <header className="mb-10">
           <h1 className="text-3xl font-black uppercase italic tracking-tighter">
-            {params.category || t('ourCollection')}
+            {sparams.category || t('product.ourCollection')}
           </h1>
         </header>
 

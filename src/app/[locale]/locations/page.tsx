@@ -2,8 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { useBranches } from "@/hooks/useDataFetchers";
 import { MapPin } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export default function LocationsPage() {
+  const t = useTranslations('locations');
   const { data: branches } = useBranches();
 
   const handleGetDirections = (branchName: string, address?: string) => {
@@ -16,8 +18,8 @@ export default function LocationsPage() {
 
   return (
     <div className="container mx-auto px-6 py-20">
-      <h1 className="text-5xl font-black uppercase italic italic mb-4 tracking-tighter">Our Locations</h1>
-      <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-16">Visit our outlets at the following locations.</p>
+      <h1 className="text-5xl font-black uppercase italic italic mb-4 tracking-tighter">{t('ourLocations')}</h1>
+      <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-16">{t('visitOutlets')}</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {branches?.map(branch => (
@@ -27,7 +29,7 @@ export default function LocationsPage() {
             
             <div className="mt-8 flex justify-between items-center">
                <div className="text-[10px] font-black uppercase tracking-tighter">
-                  <p className="opacity-40">Opening Hours</p>
+                  <p className="opacity-40">{t('openingHours')}</p>
                   <p>10:00 - 22:00 WIB</p>
                </div>
                <Button 

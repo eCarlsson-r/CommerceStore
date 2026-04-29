@@ -84,6 +84,16 @@
     "shippingPolicy": "Kebijakan Pengiriman",
     "allRightsReserved": "Hak Cipta Dilindungi"
   },
+  "locations": {
+    "ourLocations": "Lokasi Kami",
+    "visitOutlets": "Kunjungi outlet kami di lokasi berikut.",
+    "openingHours": "Jam Buka",
+    "address": "Alamat",
+    "storeHours": "Jam Operasional",
+    "contact": "Hubungi Boutique",
+    "getDirections": "Petunjuk Arah",
+    "loading": "Memuat Boutique..."
+  },
   "assistant": {
     "askQuestion": "Ajukan pertanyaan",
     "sendMessage": "Kirim",

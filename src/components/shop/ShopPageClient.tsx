@@ -18,23 +18,15 @@ export function ShopPageClient({
   initialProducts,
   categoryName,
 }: Props) {
-  const [visualSearchProducts, setVisualSearchProducts] = useState<
-    ProductCard[] | null
-  >(null);
   const [hasVisualSearch, setHasVisualSearch] = useState(false);
 
   const handleVisualSearchResults = useCallback(
     (products: ProductCard[], isActive: boolean) => {
-      setVisualSearchProducts(isActive ? products : null);
+      setHasVisualSearch(isActive);
       setHasVisualSearch(isActive);
     },
     []
   );
-
-  const handleClearVisualSearch = useCallback(() => {
-    setVisualSearchProducts(null);
-    setHasVisualSearch(false);
-  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row gap-10 my-10">
@@ -56,12 +48,7 @@ export function ShopPageClient({
           )}
         </header>
 
-        <ShopResultsClient
-          initialProducts={initialProducts}
-          visualSearchProducts={visualSearchProducts}
-          hasVisualSearch={hasVisualSearch}
-          onClearVisualSearch={handleClearVisualSearch}
-        />
+        <ShopResultsClient initialProducts={initialProducts} />
       </main>
     </div>
   );
