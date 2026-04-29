@@ -64,49 +64,46 @@ export function VisualSearchBar({
   }, [onProductsResolved, visualSearch.data]);
 
   return (
-    <section>
-      <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">
-        Visual Search
+    <section className="mb-8 rounded-2xl border border-gray-200 p-4">
+      <h2 className="text-xs font-black uppercase tracking-widest text-gray-600 mb-2">
+        AI Visual Search
       </h2>
-      <div className="space-y-3">
+      <div className="flex flex-row md:flex-col gap-3">
         <input
           type="url"
           value={imageUrl}
           onChange={(event) => setImageUrl(event.target.value)}
-          placeholder="Paste room photo URL..."
-          className="w-full px-3 py-2 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:ring-1 ring-primary/20 focus:border-primary transition-all text-sm font-medium"
+          placeholder="Paste room photo URL to find similar wallpapers"
+          className="flex-1 rounded-xl border border-gray-300 px-3 py-2 text-sm"
         />
-        <div className="flex gap-2">
-          <Button
-            className="flex-1 h-9 bg-primary text-white text-xs font-bold"
-            onClick={() => visualSearch.mutate({ imageUrl, maxResults: 6 })}
-            disabled={!imageUrl || visualSearch.isPending}
-          >
-            {visualSearch.isPending ? "Searching..." : "Find Similar"}
-          </Button>
-          <Button
-            variant="outline"
-            className="h-9 px-3 text-xs font-bold"
-            onClick={() => {
-              setImageUrl("");
-              setProducts([]);
-              onProductsResolved?.([]);
-              onClearVisualSearch?.();
-            }}
-            disabled={visualSearch.isPending && !products.length}
-          >
-            Reset
-          </Button>
-        </div>
+        <Button
+          className="bg-primary text-white"
+          onClick={() => visualSearch.mutate({ imageUrl, maxResults: 6 })}
+          disabled={!imageUrl || visualSearch.isPending}
+        >
+          {visualSearch.isPending ? "Searching..." : "Find Similar"}
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setImageUrl("");
+            setProducts([]);
+            onProductsResolved?.([]);
+            onClearVisualSearch?.();
+          }}
+          disabled={visualSearch.isPending && !products.length}
+        >
+          Reset
+        </Button>
       </div>
 
       {renderInlineResults && !!visualSearch.data?.items.length && (
-        <div className="mt-6 space-y-3">
-          <p className="text-xs font-semibold text-gray-700">Matched wallpapers:</p>
+        <div className="mt-4 space-y-3">
+          <p className="text-sm text-gray-700">Visual matches for your room:</p>
           {isLoadingProducts ? (
-            <p className="text-xs text-gray-500">Loading products...</p>
+            <p className="text-sm text-gray-500">Loading matched products...</p>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {products.map((product) => (
                 <ProductView key={product.id} product={product} />
               ))}
@@ -115,8 +112,8 @@ export function VisualSearchBar({
         </div>
       )}
       {visualSearch.isError && (
-        <p className="mt-3 text-xs text-amber-600">
-          Visual search unavailable.
+        <p className="mt-3 text-sm text-amber-600">
+          Visual search is unavailable right now.
         </p>
       )}
     </section>

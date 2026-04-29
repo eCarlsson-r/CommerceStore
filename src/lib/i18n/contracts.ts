@@ -1,4 +1,4 @@
-export type SupportedLocale = "en" | "sv";
+export type SupportedLocale = "en" | "id";
 
 export type TranslationDomain =
   | "common"

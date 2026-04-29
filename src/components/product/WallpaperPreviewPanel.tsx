@@ -1,210 +1,381 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import type {
   WallpaperPreviewRequest,
   WallpaperPreviewResult,
-  WallPolygon,
+  RoomDimensions,
+  RoomWall,
 } from "@/lib/preview/types";
 import { enqueueOfflineMutation } from "@/lib/offline/queue";
+import { previewSessionDB } from "@/lib/offline/indexeddb";
 import { toast } from "sonner";
 import api from "@/lib/api";
-import { WallMaskSelector } from "./WallMaskSelector";
-import { useAnalytics } from "@/hooks/useAnalytics";
+import { ShoppingBag, Maximize, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, LayoutGrid } from "lucide-react";
+import analytics from "@/lib/analytics/client";
+
+const WALL_ICONS: Record<RoomWall, React.ReactNode> = {
+  front: <ArrowUp size={18} />,
+  back: <ArrowDown size={18} />,
+  left: <ArrowLeft size={18} />,
+  right: <ArrowRight size={18} />,
+  all: <LayoutGrid size={18} />,
+};
+
+const WALL_LABELS: Record<RoomWall, string> = {
+  front: "Front Wall",
+  back: "Back Wall",
+  left: "Left Wall",
+  right: "Right Wall",
+  all: "All Walls",
+};
 
 type Props = {
   productId: number;
+  productImage: string;
+  onAttachToCart?: (previewId: string, previewUrl: string) => void;
 };
 
-export function WallpaperPreviewPanel({ productId }: Props) {
-  const analytics = useAnalytics();
-  const [imageUrl, setImageUrl] = useState("");
-  const [tileScale, setTileScale] = useState(1);
-  const [blendIntensity, setBlendIntensity] = useState(0.7);
-  const [result, setResult] = useState<WallpaperPreviewResult | null>(null);
-  const [showMaskSelector, setShowMaskSelector] = useState(false);
-  const [wallPolygon, setWallPolygon] = useState<WallPolygon>({
-    points: [
-      { x: 0.15, y: 0.2 },
-      { x: 0.85, y: 0.2 },
-      { x: 0.9, y: 0.85 },
-      { x: 0.1, y: 0.85 },
-    ],
+export function WallpaperPreviewPanel({ productId, productImage, onAttachToCart }: Props) {
+  const [roomDimensions, setRoomDimensions] = useState<RoomDimensions>({
+    width: 4,
+    height: 2.8,
+    depth: 3.5,
   });
+  const [selectedWall, setSelectedWall] = useState<RoomWall>("front");
+  const [tileScale, setTileScale] = useState(1);
+  const [patternRepeat, setPatternRepeat] = useState(53);
+  const [result, setResult] = useState<WallpaperPreviewResult | null>(null);
+  const [isAttaching, setIsAttaching] = useState(false);
+  const [hasTrackedOpen, setHasTrackedOpen] = useState(false);
+
+  if (!hasTrackedOpen) {
+    analytics.trackPreviewOpened(productId);
+    setHasTrackedOpen(true);
+  }
 
   const request = useMemo<WallpaperPreviewRequest>(
     () => ({
       productId,
-      imageUrl,
+      productImage,
+      roomDimensions,
+      selectedWall,
       tileScale,
-      blendIntensity,
-      wallPolygon,
+      patternRepeat,
     }),
-    [productId, imageUrl, tileScale, blendIntensity, wallPolygon],
+    [productId, productImage, roomDimensions, selectedWall, tileScale, patternRepeat],
   );
 
-  const handleGeneratePreview = async () => {
-    if (!request.imageUrl.trim()) {
-      toast.error("Paste a room image URL first.");
-      return;
+  const calculateRollsNeeded = (wallWidth: number, wallHeight: number): number => {
+    const wallpaperWidth = 0.53;
+    const stripsNeeded = Math.ceil(wallWidth / wallpaperWidth);
+    const stripLength = wallHeight + 0.1;
+    const patternRepeatM = patternRepeat / 100;
+    const effectiveStripLength = Math.ceil(stripLength / patternRepeatM) * patternRepeatM;
+    const rollLength = 10;
+    const stripsPerRoll = Math.floor(rollLength / effectiveStripLength);
+    return Math.ceil(stripsNeeded / Math.max(stripsPerRoll, 1));
+  };
+
+  const getWallDimensions = (wall: RoomWall): { width: number; height: number } => {
+    if (wall === "left" || wall === "right") {
+      return { width: roomDimensions.depth, height: roomDimensions.height };
     }
+    if (wall === "front" || wall === "back") {
+      return { width: roomDimensions.width, height: roomDimensions.height };
+    }
+    return { width: roomDimensions.width, height: roomDimensions.height };
+  };
 
-    // Track preview opening
-    analytics.trackPreviewOpened(productId);
-
+  const handleGeneratePreview = async () => {
     const startTime = performance.now();
+
+    const coverage = selectedWall === "all"
+      ? (["front", "back", "left", "right"] as RoomWall[]).map((wall) => {
+          const dims = getWallDimensions(wall);
+          return {
+            wall,
+            width: dims.width,
+            height: dims.height,
+            rollsNeeded: calculateRollsNeeded(dims.width, dims.height),
+          };
+        })
+      : [{
+          wall: selectedWall,
+          ...getWallDimensions(selectedWall),
+          rollsNeeded: calculateRollsNeeded(getWallDimensions(selectedWall).width, getWallDimensions(selectedWall).height),
+        }];
+
+    const totalRolls = coverage.reduce((sum, c) => sum + c.rollsNeeded, 0);
+
+    const previewId = crypto.randomUUID();
+    const roomPreviewUrl = `/api/preview-render/${previewId}?productId=${productId}&wall=${selectedWall}&width=${roomDimensions.width}&height=${roomDimensions.height}&depth=${roomDimensions.depth}&scale=${tileScale}`;
+
     const output: WallpaperPreviewResult = {
-      previewId: crypto.randomUUID(),
-      composedImageUrl: request.imageUrl,
-      renderMs: 120,
-      warnings: [],
+      previewId,
+      roomPreviewUrl,
+      wallCoverage: coverage,
+      renderMs: Math.round(performance.now() - startTime),
+      warnings: totalRolls > 10 ? ["Large area - consider professional installation"] : [],
     };
     setResult(output);
+
+    await previewSessionDB.save({
+      previewId: output.previewId,
+      productId: request.productId,
+      productImage: request.productImage,
+      roomDimensions: request.roomDimensions,
+      selectedWall: request.selectedWall,
+      tileScale: request.tileScale,
+      patternRepeat: request.patternRepeat,
+      roomPreviewUrl: output.roomPreviewUrl,
+      wallCoverage: output.wallCoverage,
+      createdAt: new Date().toISOString(),
+    });
+
+    analytics.trackPreviewRendered(output.previewId, output.renderMs, productId);
 
     const payload = {
       preview_id: output.previewId,
       product_id: request.productId,
-      image_url: request.imageUrl,
+      room_dimensions: request.roomDimensions,
+      selected_wall: request.selectedWall,
       tile_scale: request.tileScale,
-      blend_intensity: request.blendIntensity,
-      wall_polygon: request.wallPolygon,
+      pattern_repeat: request.patternRepeat,
+      wall_coverage: output.wallCoverage,
     };
 
     if (typeof navigator !== "undefined" && navigator.onLine) {
       try {
-        const response = await api.post("/ecommerce/previews", payload);
-        const previewId = response.data?.preview_id;
-        const renderTime = Math.round(performance.now() - startTime);
-        
-        if (previewId) {
-          setResult((prev) =>
-            prev ? { ...prev, previewId: String(previewId) } : prev,
-          );
-        }
-
-        // Track successful preview rendering
-        analytics.trackPreviewRendered(String(previewId || output.previewId), renderTime, productId);
-        toast.success("Preview generated and synced.");
-        return;
-      } catch (error) {
-        // Track preview failure
-        analytics.trackEvent("commercial", "preview_failed", 0, {
-          product_id: productId,
-          error: String(error),
+        await api.post("/ecommerce/previews", payload);
+        toast.success(`Preview generated! ${totalRolls} rolls needed.`);
+      } catch {
+        enqueueOfflineMutation({
+          idempotencyKey: `preview.save:${output.previewId}`,
+          type: "preview.save",
+          payload,
         });
-        // Fall through to offline queue.
+        toast.success(`Preview generated! ${totalRolls} rolls needed. (Saved offline)`);
       }
+    } else {
+      enqueueOfflineMutation({
+        idempotencyKey: `preview.save:${output.previewId}`,
+        type: "preview.save",
+        payload,
+      });
+      toast.success(`Preview generated! ${totalRolls} rolls needed. (Saved offline)`);
     }
-
-    enqueueOfflineMutation({
-      idempotencyKey: `preview.save:${output.previewId}`,
-      type: "preview.save",
-      payload,
-    });
-    toast.success("Preview generated. Saved for sync.");
   };
 
-  const handlePolygonChange = (polygon: WallPolygon) => {
-    setWallPolygon(polygon);
-    setShowMaskSelector(false);
-    toast.success("Wall region updated");
+  const handleAttachToCart = async () => {
+    if (!result) return;
+
+    setIsAttaching(true);
+    analytics.trackPreviewAttachedToCart(result.previewId, productId);
+
+    const payload = {
+      preview_id: result.previewId,
+      product_id: productId,
+      preview_url: result.roomPreviewUrl,
+      wall_coverage: result.wallCoverage,
+    };
+
+    onAttachToCart?.(result.previewId, result.roomPreviewUrl);
+
+    if (typeof navigator !== "undefined" && navigator.onLine) {
+      try {
+        await api.post("/ecommerce/previews/attach", payload);
+        toast.success("Preview attached to cart!");
+      } catch {
+        enqueueOfflineMutation({
+          idempotencyKey: `preview.attach_to_cart:${result.previewId}`,
+          type: "preview.attach_to_cart",
+          payload,
+        });
+        toast.success("Preview will be attached when online.");
+      }
+    } else {
+      enqueueOfflineMutation({
+        idempotencyKey: `preview.attach_to_cart:${result.previewId}`,
+        type: "preview.attach_to_cart",
+        payload,
+      });
+      toast.success("Preview will be attached when online.");
+    }
+
+    setIsAttaching(false);
   };
 
   return (
     <section className="rounded-2xl border border-gray-200 p-5 space-y-4">
       <div>
-        <h3 className="text-sm font-black uppercase tracking-wider">
-          Wall Preview (MVP)
+        <h3 className="text-sm font-black uppercase tracking-wider flex items-center gap-2">
+          <Maximize size={16} />
+          Room Preview
         </h3>
         <p className="text-xs text-gray-500">
-          Deterministic preview pipeline: perspective mapping + repeat scale + blend.
+          Enter your room dimensions and select which wall to preview.
         </p>
       </div>
 
-      {showMaskSelector ? (
-        <>
-          {imageUrl && (
-            <WallMaskSelector
-              imageUrl={imageUrl}
-              onPolygonChange={handlePolygonChange}
-              onCancel={() => setShowMaskSelector(false)}
+      <div className="space-y-3">
+        <h4 className="text-xs font-semibold text-gray-700 uppercase">Room Dimensions (meters)</h4>
+        <div className="grid grid-cols-3 gap-3">
+          <label className="space-y-1">
+            <span className="text-[10px] font-medium text-gray-500">Width</span>
+            <input
+              type="number"
+              min={1}
+              max={20}
+              step={0.1}
+              value={roomDimensions.width}
+              onChange={(e) => setRoomDimensions((prev) => ({ ...prev, width: Number(e.target.value) }))}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
             />
-          )}
-          {!imageUrl && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3">
-              <p className="text-xs text-red-700">Please enter an image URL first to select wall region.</p>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="space-y-3">
-          <input
-            type="url"
-            value={imageUrl}
-            onChange={(event) => setImageUrl(event.target.value)}
-            placeholder="https://example.com/your-room.jpg"
-            className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <label className="text-xs font-semibold text-gray-600">
-              Tile Scale: {tileScale.toFixed(2)}x
-              <input
-                type="range"
-                min={0.5}
-                max={2}
-                step={0.05}
-                value={tileScale}
-                onChange={(event) => setTileScale(Number(event.target.value))}
-                className="w-full"
-              />
-            </label>
-
-            <label className="text-xs font-semibold text-gray-600">
-              Blend: {blendIntensity.toFixed(2)}
-              <input
-                type="range"
-                min={0.2}
-                max={1}
-                step={0.05}
-                value={blendIntensity}
-                onChange={(event) => setBlendIntensity(Number(event.target.value))}
-                className="w-full"
-              />
-            </label>
-          </div>
-
-          <Button
-            onClick={() => setShowMaskSelector(true)}
-            variant="outline"
-            className="w-full"
-          >
-            Select Wall Region
-          </Button>
+          </label>
+          <label className="space-y-1">
+            <span className="text-[10px] font-medium text-gray-500">Height</span>
+            <input
+              type="number"
+              min={1}
+              max={10}
+              step={0.1}
+              value={roomDimensions.height}
+              onChange={(e) => setRoomDimensions((prev) => ({ ...prev, height: Number(e.target.value) }))}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="space-y-1">
+            <span className="text-[10px] font-medium text-gray-500">Depth</span>
+            <input
+              type="number"
+              min={1}
+              max={20}
+              step={0.1}
+              value={roomDimensions.depth}
+              onChange={(e) => setRoomDimensions((prev) => ({ ...prev, depth: Number(e.target.value) }))}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+          </label>
         </div>
-      )}
+      </div>
 
-      {!showMaskSelector && (
-        <Button
-          onClick={handleGeneratePreview}
-          className="w-full md:w-auto bg-primary text-white"
-        >
-          Generate Preview
+      <div className="space-y-2">
+        <h4 className="text-xs font-semibold text-gray-700 uppercase">Select Wall</h4>
+        <div className="grid grid-cols-5 gap-2">
+          {(["front", "back", "left", "right", "all"] as RoomWall[]).map((wall) => (
+            <button
+              key={wall}
+              onClick={() => setSelectedWall(wall)}
+              className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${
+                selectedWall === wall
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
+              }`}
+            >
+              {WALL_ICONS[wall]}
+              <span className="text-[9px] font-medium">{WALL_LABELS[wall]}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <h4 className="text-xs font-semibold text-gray-700 uppercase">Wallpaper Settings</h4>
+        <div className="grid grid-cols-2 gap-3">
+          <label className="space-y-1">
+            <span className="text-[10px] font-medium text-gray-500">Pattern Scale: {tileScale.toFixed(2)}x</span>
+            <input
+              type="range"
+              min={0.5}
+              max={2}
+              step={0.05}
+              value={tileScale}
+              onChange={(e) => setTileScale(Number(e.target.value))}
+              className="w-full"
+            />
+          </label>
+          <label className="space-y-1">
+            <span className="text-[10px] font-medium text-gray-500">Pattern Repeat: {patternRepeat}cm</span>
+            <input
+              type="number"
+              min={0}
+              max={200}
+              step={1}
+              value={patternRepeat}
+              onChange={(e) => setPatternRepeat(Number(e.target.value))}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className="flex gap-2 pt-2">
+        <Button onClick={handleGeneratePreview} className="flex-1 bg-primary text-white">
+          Generate Room Preview
         </Button>
-      )}
+
+        {result && onAttachToCart && (
+          <Button
+            onClick={handleAttachToCart}
+            disabled={isAttaching}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <ShoppingBag size={16} />
+            {isAttaching ? "Attaching..." : "Add to Cart"}
+          </Button>
+        )}
+      </div>
 
       {result && (
-        <div className="space-y-2">
-          <p className="text-xs text-gray-500">
-            Preview ID: <span className="font-mono">{result.previewId}</span>
-          </p>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={result.composedImageUrl}
-            alt="Wallpaper preview"
-            className="w-full max-h-80 object-cover rounded-xl border border-gray-200"
-          />
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center justify-between border-b pb-2">
+            <p className="text-xs text-gray-500">
+              Preview ID: <span className="font-mono">{result.previewId.slice(0, 8)}</span>
+            </p>
+            <p className="text-xs text-gray-400">{result.renderMs}ms</p>
+          </div>
+
+          <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden border border-gray-200">
+            <img
+              src={result.roomPreviewUrl}
+              alt="Room preview"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+              }}
+            />
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+            <h5 className="text-xs font-semibold uppercase text-gray-700">Coverage Summary</h5>
+            {result.wallCoverage.map((coverage) => (
+              <div key={coverage.wall} className="flex justify-between text-sm">
+                <span className="text-gray-600">{WALL_LABELS[coverage.wall]}</span>
+                <span className="font-medium">
+                  {coverage.width.toFixed(1)}m × {coverage.height.toFixed(1)}m
+                  <span className="text-primary ml-2">({coverage.rollsNeeded} rolls)</span>
+                </span>
+              </div>
+            ))}
+            <div className="border-t pt-2 mt-2">
+              <div className="flex justify-between font-semibold">
+                <span>Total Rolls Needed</span>
+                <span className="text-primary text-lg">
+                  {result.wallCoverage.reduce((sum, c) => sum + c.rollsNeeded, 0)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {result.warnings.length > 0 && (
+            <div className="bg-yellow-50 text-yellow-700 text-xs p-2 rounded-lg">
+              ⚠️ {result.warnings[0]}
+            </div>
+          )}
         </div>
       )}
     </section>

@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { IntlProvider } from 'next-intl';
+import { NextIntlClientProvider } from 'next-intl';
 
 type Props = {
   children: ReactNode;
@@ -11,8 +11,8 @@ type Props = {
 
 export function I18nProvider({ children, locale, messages }: Props) {
   return (
-    <IntlProvider locale={locale} messages={messages} timeZone="UTC">
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC">
       {children}
-    </IntlProvider>
+    </NextIntlClientProvider>
   );
 }

@@ -1,68 +1,46 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { VisualSearchBar } from "@/components/ai/VisualSearchBar";
 import { ProductGrid } from "@/components/ecommerce/ProductGrid";
 import type { ProductCard } from "@/lib/types";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 
 type Props = {
   initialProducts: ProductCard[];
-  visualSearchProducts?: ProductCard[] | null;
-  hasVisualSearch?: boolean;
-  onClearVisualSearch?: () => void;
 };
 
-export function ShopResultsClient({
-  initialProducts,
-  visualSearchProducts = null,
-  hasVisualSearch = false,
-  onClearVisualSearch,
-}: Props) {
-  const displayedProducts = useMemo(() => {
-    if (visualSearchProducts && visualSearchProducts.length > 0) {
-      return visualSearchProducts;
-    }
-    return initialProducts;
-  }, [initialProducts, visualSearchProducts]);
+export function ShopResultsClient({ initialProducts }: Props) {
+  const [visualProducts, setVisualProducts] = useState<ProductCard[] | null>(null);
 
-  const isVisualSearchActive =
-    hasVisualSearch && visualSearchProducts && visualSearchProducts.length > 0;
+  const displayedProducts = useMemo(() => {
+    if (visualProducts === null) return initialProducts;
+    return visualProducts;
+  }, [initialProducts, visualProducts]);
+
+  const handleProductsResolved = useCallback((products: ProductCard[]) => {
+    setVisualProducts(products);
+  }, []);
 
   const handleClearVisualSearch = useCallback(() => {
-    onClearVisualSearch?.();
-  }, [onClearVisualSearch]);
+    setVisualProducts(null);
+  }, []);
 
   return (
-    <div className="space-y-6">
-      {isVisualSearchActive && (
-        <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div>
-            <p className="text-sm font-semibold text-blue-900">
-              🔍 Visual Search Results
-            </p>
-            <p className="text-xs text-blue-700 mt-1">
-              Showing {displayedProducts.length} AI-matched products from your image search
-            </p>
-          </div>
-          <Button
-            onClick={handleClearVisualSearch}
-            variant="ghost"
-            size="sm"
-            className="ml-4"
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-      )}
+    <>
+      <VisualSearchBar
+        renderInlineResults={false}
+        onProductsResolved={handleProductsResolved}
+        onClearVisualSearch={handleClearVisualSearch}
+      />
 
-      {displayedProducts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No products found</p>
-        </div>
+      {visualProducts !== null && (
+        <p className="mb-4 text-sm text-gray-600">
+          Showing {displayedProducts.length} visual match
+          {displayedProducts.length === 1 ? "" : "es"} from AI search.
+        </p>
       )}
 
       <ProductGrid products={displayedProducts} />
-    </div>
+    </>
   );
 }

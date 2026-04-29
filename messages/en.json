@@ -1,6 +1,7 @@
 {
   "common": {
     "language": "Language",
+    "login": "Login",
     "logout": "Logout",
     "search": "Search",
     "cart": "Cart",
@@ -36,7 +37,25 @@
     "newArrivals": "New Arrivals",
     "wallPreview": "Wall Preview",
     "selectWallRegion": "Select Wall Region",
-    "previewGenerated": "Preview Generated"
+    "previewGenerated": "Preview Generated",
+    "ourCollection": "Our Collection"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "loginError": "Invalid credentials",
+    "loginSuccess": "Login successful",
+    "unauthorized": "Unauthorized",
+    "returningClient": "Returning Boutique Client",
+    "newClient": "New to Republican Jewelry",
+    "signIn": "Sign In",
+    "verifying": "Verifying...",
+    "or": "OR",
+    "register": "Register",
+    "creating": "Creating...",
+    "createAccount": "Create Account"
   },
   "checkout": {
     "checkoutTitle": "Checkout",
@@ -53,7 +72,10 @@
     "continueShoppingButton": "Continue Shopping",
     "selectedPickupBranch": "Selected Pickup Branch",
     "courierOptions": "Courier Options",
-    "pickupLocation": "Pickup Location"
+    "pickupLocation": "Pickup Location",
+    "orderSuccess": "Order placed successfully!",
+    "orderError": "Failed to process order.",
+    "branchNotAvailable": "Some items are not available at the selected branch."
   },
   "legal": {
     "termsOfService": "Terms of Service",

@@ -3,8 +3,10 @@ import Hero from "@/components/Hero";
 import Sidebar from "@/components/Sidebar";
 import { ProductGrid } from "@/components/ecommerce/ProductGrid";
 import { useBanners, useCategories, useProducts } from "@/hooks/useDataFetchers"
+import { useTranslations } from 'next-intl';
 
 export default function HomePage() {
+  const t = useTranslations('product');
   // We fetch these in parallel for speed
   const { data: banners, isLoading: bannersLoading } = useBanners();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
@@ -40,14 +42,14 @@ export default function HomePage() {
         <main className="w-full md:w-3/4">
           <section>
             <h2 className="text-xl font-black uppercase italic mb-6 text-primary">
-              Best Sellers
+              {t('bestSellers')}
             </h2>
             <ProductGrid products={bestSellers?.products || []} />
           </section>
 
           <section className="-mx-4 px-4 py-12">
             <h2 className="text-xl font-black uppercase italic mb-6 text-primary">
-              New Arrivals
+              {t('newArrivals')}
             </h2>
             <ProductGrid products={newArrivals?.products || []} />
           </section>

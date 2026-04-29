@@ -25,12 +25,12 @@ export function LocaleSwitcher() {
 
   return (
     <Select value={locale} onValueChange={handleLocaleChange}>
-      <SelectTrigger className="w-24">
+      <SelectTrigger className="w-fit bg-muted">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="en">English</SelectItem>
-        <SelectItem value="sv">Svenska</SelectItem>
+        <SelectItem value="id">Bahasa Indonesia</SelectItem>
       </SelectContent>
     </Select>
   );

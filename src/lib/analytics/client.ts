@@ -99,6 +99,26 @@ class AnalyticsClient {
   }
 
   /**
+   * Track preview attached to cart
+   */
+  public trackPreviewAttachedToCart(previewId: string, productId: number) {
+    this.trackEvent("commercial", "preview_added_to_cart", 1, {
+      preview_id: previewId,
+      product_id: productId,
+    });
+  }
+
+  /**
+   * Track preview failed
+   */
+  public trackPreviewFailed(productId: number, error: string) {
+    this.trackEvent("operational", "preview_failed", 1, {
+      product_id: productId,
+      error: error.substring(0, 200),
+    });
+  }
+
+  /**
    * Track conversion
    */
   public trackConversion(orderId: string, orderValue: number, itemsCount: number) {

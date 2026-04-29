@@ -8,7 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { Minus, Plus, ShoppingBag, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -41,6 +41,13 @@ export function CartDrawer() {
                     ? item.image
                     : process.env.NEXT_PUBLIC_API_URL + item.image
                 : "https://placehold.co/200x200/png"} alt={item.name} fill className="object-cover" />
+                
+                {/* Preview indicator badge */}
+                {item.preview && (
+                  <div className="absolute bottom-0 right-0 bg-blue-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-tl-lg">
+                    <ImageIcon className="w-3 h-3" />
+                  </div>
+                )}
               </div>
               
               <div className="flex-1 flex flex-col justify-between">
@@ -55,6 +62,23 @@ export function CartDrawer() {
                     </span>
                   </div>
                 </div>
+                
+                {/* Preview thumbnail if available */}
+                {item.preview && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-blue-200">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img 
+                        src={item.preview.previewUrl} 
+                        alt="Wall preview" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="text-[9px] text-blue-600 font-medium">
+                      Wall preview attached
+                    </span>
+                  </div>
+                )}
                 
                 <div className="flex justify-between items-end mt-2">
                   <p className="text-sm font-black text-secondary">

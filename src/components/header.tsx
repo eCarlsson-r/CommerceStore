@@ -3,13 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { User, Heart, LogOut, Lock, Phone, Mail, Instagram, Facebook } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { CartDrawer } from "./cart/CartDrawer"; // Import the drawer we built
+import { CartDrawer } from "./cart/CartDrawer";
 import { useWishlist } from "@/context/WishlistContext";
 import { NotificationToggle } from "./ui/notification-toggle";
+import { LocaleSwitcher } from "./LocaleSwitcher";
+import { useTranslations } from 'next-intl';
 
 export default function Header() {
   const { user, logout } = useAuth();
   const { wishlist } = useWishlist();
+  const t = useTranslations('common');
 
   return (
     <header className="w-full bg-white">
@@ -17,16 +20,17 @@ export default function Header() {
       <div className="bg-primary py-2">
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex gap-6 items-center">
-            <a href="tel:+2950188821" className="text-[10px] font-black text-gray-400 hover:text-white flex items-center tracking-widest transition-all">
-              <Phone className="w-3 h-3 mr-2 text-primary" /> +82 895 01 88 821
+            <a href="tel:+2950188821" className="font-black text-gray-400 hover:text-white flex items-center tracking-widest transition-all">
+              <Phone className="w-5 h-5 mr-2 text-primary" /> +82 895 01 88 821
             </a>
-            <a href="mailto:info@republican.com" className="hidden sm:flex text-[10px] font-black text-gray-400 hover:text-white items-center tracking-widest transition-all">
-              <Mail className="w-3 h-3 mr-2 text-primary" /> commerce@carlssonstudio.com
+            <a href="mailto:info@republican.com" className="hidden sm:flex font-black text-gray-400 hover:text-white items-center tracking-widest transition-all">
+              <Mail className="w-5 h-5 mr-2 text-primary" /> commerce@carlssonstudio.com
             </a>
           </div>
           <div className="flex gap-4 items-center">
-            <Instagram className="w-3 h-3 text-gray-400 hover:text-primary cursor-pointer" />
-            <Facebook className="w-3 h-3 text-gray-400 hover:text-primary cursor-pointer" />
+            <LocaleSwitcher />
+            <Instagram className="w-5 h-5 text-gray-400 hover:text-primary cursor-pointer" />
+            <Facebook className="w-5 h-5 text-gray-400 hover:text-primary cursor-pointer" />
           </div>
         </div>
       </div>
@@ -63,7 +67,7 @@ export default function Header() {
                   <NotificationToggle />
                   <Link href="/account/" className="p-2 text-gray-400 hover:text-primary transition-colors flex items-center gap-2">
                     <User className="w-5 h-5" />
-                    <span className="hidden lg:inline text-[10px] font-black uppercase tracking-widest">Account</span>
+                    <span className="hidden lg:inline text-[10px] font-black uppercase tracking-widest">{t('account')}</span>
                   </Link>
                   <Link href="/wishlist" className="relative group">
                     <Heart size={20} className="text-gray-900 group-hover:text-primary transition-colors" />
@@ -82,7 +86,7 @@ export default function Header() {
                 <>
                   <CartDrawer /> {/* Integrated Cart Drawer */}
                   <Link href="/login" className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-secondary transition-all">
-                    <Lock className="w-4 h-4" /> Member Login
+                    <Lock className="w-4 h-4" /> {t('login')}
                   </Link>
                 </>
               )}

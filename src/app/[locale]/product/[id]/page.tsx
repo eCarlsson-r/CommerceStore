@@ -13,13 +13,15 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { WallpaperPreviewPanel } from "@/components/product/WallpaperPreviewPanel";
 import { ProductAIInsights } from "@/components/ai/ProductAIInsights";
+import { useTranslations } from 'next-intl';
 
 export default function ProductPage() {
+  const t = useTranslations('common');
   const params = useParams();
   const productId = params.id as string;
 
   const { data: productResponse, isLoading, error } = useProduct(productId);
-  const { addToCart } = useCart();
+  const { addToCart, attachPreview } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const isWishlisted = isInWishlist(Number(productId));
 
@@ -32,10 +34,16 @@ export default function ProductPage() {
     if (productResponse && selectedStock) addToCart(productResponse.product, selectedStock.branch);
   };
 
+  const handleAttachPreview = (previewId: string, previewUrl: string) => {
+    if (productResponse && selectedStock?.branch?.id) {
+      attachPreview(productResponse.product.id, selectedStock.branch.id, previewId, previewUrl);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center">Loading product...</div>
+        <div className="text-center">{t('loading')}...</div>
       </div>
     );
   }
@@ -44,7 +52,7 @@ export default function ProductPage() {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="text-center text-red-500">
-          Error loading product. Please try again.
+          {t('error')}
         </div>
       </div>
     );
@@ -68,7 +76,10 @@ export default function ProductPage() {
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Left: Professional Gallery using your media[] */}
-        <ImageGallery items={product.media || []} mainImage={product.image} />
+        <div className="space-y-8">
+          <ImageGallery items={product.media || []} mainImage={product.image} />
+          <ProductAIInsights productId={product.id} productName={product.name} />
+        </div>
 
         {/* Right: Product Info & Actions */}
         <div className="space-y-8">
@@ -136,8 +147,11 @@ export default function ProductPage() {
             {product.description}
           </p>
 
-          <WallpaperPreviewPanel productId={product.id} />
-          <ProductAIInsights productId={product.id} productName={product.name} />
+          <WallpaperPreviewPanel 
+            productId={product.id} 
+            productImage={product.image || (product.media?.[0]?.url ?? "")}
+            onAttachToCart={handleAttachPreview}
+          />
 
           {/* Footer of PDP: Authenticity Guarantee */}
           <div className="pt-8 border-t border-gray-100 flex gap-6">

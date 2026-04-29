@@ -2,71 +2,62 @@ import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const publicRoutes = [
-    '/',
-    '/login',
-    '/shop',
-    '/product',
-    '/cart',
-    '/about',
-    '/contact',
-    '/branches',
-    '/privacy',
-    '/terms',
-];
-
-function isPublicRoute(pathname: string) {
-    return publicRoutes.some(
-        (route) => pathname === route || pathname.startsWith(route + '/')
-    );
-}
-
-// Handle i18n routing
+// Create next-intl middleware for locale routing
 const intlMiddleware = createMiddleware({
-    locales: ['en', 'sv'],
+    locales: ['en', 'id'],
     defaultLocale: 'en',
+    localePrefix: 'always',
 });
 
-function authMiddleware(request: NextRequest) {
-    const token = request.cookies.get('auth_token');
+// Public routes that don't require auth
+const publicRoutes = ['/', '/login', '/shop', '/product', '/cart', '/about', '/contact', '/branches', '/privacy', '/terms'];
+
+function isPublicRoute(path: string) {
+    return publicRoutes.some(route => path === route || path.startsWith(route + '/'));
+}
+
+export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    const token = request.cookies.get('auth_token');
     
-    // Extract locale from pathname
-    const locales = ['en', 'sv'];
+    // Let next-intl handle locale routing first
+    const response = intlMiddleware(request);
+    
+    // Check if this is a redirect (locale redirect like / -> /en/)
+    if (response.status === 307 || response.status === 308) {
+        return response;
+    }
+    
+    // Extract locale and path for auth check
+    const locales = ['en', 'id'];
     let currentLocale = 'en';
+    let pathWithoutLocale = pathname;
+    
     for (const locale of locales) {
         if (pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`) {
             currentLocale = locale;
+            pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
             break;
         }
     }
     
-    const pathWithoutLocale = pathname.replace(`/${currentLocale}`, '') || '/';
     const isAuthPage = pathWithoutLocale.startsWith('/login');
-
-    // Allow public routes without authentication
+    
+    // Public routes: allow access
     if (isPublicRoute(pathWithoutLocale)) {
-        // If logged in and visiting /login, redirect to account
+        // If logged in and on login page, redirect to account
         if (token && isAuthPage) {
             return NextResponse.redirect(new URL(`/${currentLocale}/account`, request.url));
         }
-        return NextResponse.next();
+        return response;
     }
-
-    // Protected routes: redirect to login if not authenticated
+    
+    // Protected routes: require auth
     if (!token) {
         return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
     }
-
-    return NextResponse.next();
-}
-
-export function middleware(request: NextRequest) {
-    // Apply i18n middleware first
-    const response = intlMiddleware(request);
     
-    // Then apply auth middleware
-    return authMiddleware(request);
+    return response;
 }
 
 export const config = {

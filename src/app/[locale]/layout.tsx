@@ -11,6 +11,13 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import { PWAProvider } from '@/components/pwa/PWAManager';
 import OfflineSyncManager from '@/components/offline/OfflineSyncManager';
 import { FloatingAssistantWidget } from '@/components/ai/FloatingAssistantWidget';
+import enMessages from '../../../messages/en.json';
+import idMessages from '../../../messages/id.json';
+
+const messagesByLocale: Record<string, any> = {
+  en: enMessages,
+  id: idMessages,
+};
 
 type Props = {
   children: ReactNode;
@@ -19,7 +26,7 @@ type Props = {
 
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
-  const messages = await getMessages();
+  const messages = messagesByLocale[locale] || enMessages;
 
   return (
     <I18nProvider locale={locale} messages={messages}>

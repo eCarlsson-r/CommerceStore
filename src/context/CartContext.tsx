@@ -15,6 +15,7 @@ interface CartContextType {
   removeFromCart: (id: number, branch: Branch) => void;
   clearCart: () => void;
   cartTotal: number;
+  attachPreview: (productId: number, branchId: number, previewId: string, previewUrl: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -172,13 +173,31 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("shopping_cart");
   };
 
+  const attachPreview = (productId: number, branchId: number, previewId: string, previewUrl: string) => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === productId && item.branch.id === branchId
+          ? {
+              ...item,
+              preview: {
+                previewId,
+                previewUrl,
+                attachedAt: new Date().toISOString(),
+              },
+            }
+          : item
+      )
+    );
+    toast.success("Wall preview attached to cart item!");
+  };
+
   const cartTotal = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, updateQuantity, removeFromCart, clearCart, cartTotal }}>
+    <CartContext.Provider value={{ cart, addToCart, updateQuantity, removeFromCart, clearCart, cartTotal, attachPreview }}>
       {children}
     </CartContext.Provider>
   );

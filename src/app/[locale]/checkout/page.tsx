@@ -8,8 +8,11 @@ import { Input } from "@/components/ui/input";
 import { useBranches } from "@/hooks/useDataFetchers";
 import { cn } from "@/lib/utils";
 import { AxiosError } from 'axios';
+import { useTranslations } from 'next-intl';
 
 export default function CheckoutPage() {
+  const t = useTranslations('common');
+  const tc = useTranslations('checkout');
   const { cart, cartTotal, clearCart } = useCart();
   const router = useRouter();
   const { data: branches, isLoading: branchesLoading } = useBranches();
@@ -30,7 +33,7 @@ export default function CheckoutPage() {
   const handleSubmitOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isBranchValid) {
-       toast.error("Some items are not available at the selected branch.");
+       toast.error(tc('branchNotAvailable'));
        return;
     }
 
@@ -49,13 +52,13 @@ export default function CheckoutPage() {
       const { data } = await api.post("/orders", orderData);
       
       if (data.order_id) {
-        toast.success("Order placed successfully!");
+        toast.success(tc('orderSuccess'));
         clearCart(); 
         router.push(`/order-success/${data.order_id}`);
       }
     } catch (err: unknown) {
       const error = err as AxiosError<{ message: string }>;
-      const msg = error.response?.data?.message as string || "Failed to process order.";
+      const msg = error.response?.data?.message as string || tc('orderError');
       toast.error(msg);   
     } finally {
       setLoading(false);
