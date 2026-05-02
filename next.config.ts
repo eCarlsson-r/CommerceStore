@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
   images: {
@@ -11,10 +12,15 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '8000',
-        pathname: '**', // This allows any path under the hostname
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'image.pollinations.ai',
       },
     ],
   }
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin('./i18n.config.ts');
+export default withNextIntl(nextConfig);

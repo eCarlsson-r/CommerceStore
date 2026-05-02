@@ -49,6 +49,9 @@ export function WallpaperPreviewPanel({ productId, productImage, onAttachToCart 
   const [result, setResult] = useState<WallpaperPreviewResult | null>(null);
   const [isAttaching, setIsAttaching] = useState(false);
   const [hasTrackedOpen, setHasTrackedOpen] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   if (!hasTrackedOpen) {
     analytics.trackPreviewOpened(productId);
@@ -110,7 +113,20 @@ export function WallpaperPreviewPanel({ productId, productImage, onAttachToCart 
     const totalRolls = coverage.reduce((sum, c) => sum + c.rollsNeeded, 0);
 
     const previewId = crypto.randomUUID();
-    const roomPreviewUrl = `/api/preview-render/${previewId}?productId=${productId}&wall=${selectedWall}&width=${roomDimensions.width}&height=${roomDimensions.height}&depth=${roomDimensions.depth}&scale=${tileScale}`;
+    
+    // Build Pollinations.ai URL directly (avoid backend redirect issues)
+    const wallDescriptions: Record<RoomWall, string> = {
+      front: 'front wall',
+      back: 'back wall',
+      left: 'left wall',
+      right: 'right wall',
+      all: 'all four walls',
+    };
+    const wallDesc = wallDescriptions[selectedWall];
+    const roomSize = `${roomDimensions.width}m x ${roomDimensions.depth}m room with ${roomDimensions.height}m ceiling height`;
+    const prompt = encodeURIComponent(`Professional interior design photography of a ${roomSize}, ${wallDesc} covered with decorative wallpaper. Modern living space with natural lighting, neutral furniture, warm ambient light, photorealistic, 8k quality, architectural visualization, floor lamp, sofa, minimal decor`);
+    const seed = previewId.split('-')[0]; // Use first part of UUID as seed
+    const roomPreviewUrl = `https://image.pollinations.ai/prompt/${prompt}?width=1024&height=768&seed=${seed}&nologo=true&negative_prompt=blurry,low quality, distorted, ugly, deformed`;
 
     const output: WallpaperPreviewResult = {
       previewId,
@@ -143,7 +159,13 @@ export function WallpaperPreviewPanel({ productId, productImage, onAttachToCart 
       selected_wall: request.selectedWall,
       tile_scale: request.tileScale,
       pattern_repeat: request.patternRepeat,
-      wall_coverage: output.wallCoverage,
+      wall_coverage: output.wallCoverage.map(c => ({
+        wall: c.wall,
+        width: c.width,
+        height: c.height,
+        rolls_needed: c.rollsNeeded,
+      })),
+      room_preview_url: output.roomPreviewUrl,
     };
 
     if (typeof navigator !== "undefined" && navigator.onLine) {
@@ -339,15 +361,54 @@ export function WallpaperPreviewPanel({ productId, productImage, onAttachToCart 
           </div>
 
           <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden border border-gray-200">
-            <img
-              src={result.roomPreviewUrl}
-              alt="Room preview"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-              }}
-            />
+            {imageLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                  <p className="text-xs text-gray-500">Generating preview...</p>
+                  <p className="text-[10px] text-gray-400 mt-1">This may take 5-15 seconds</p>
+                </div>
+              </div>
+            )}
+            {imageError && retryCount < 3 ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                <button
+                  onClick={() => {
+                    setImageError(false);
+                    setImageLoading(true);
+                    setRetryCount(c => c + 1);
+                  }}
+                  className="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90"
+                >
+                  Retry Loading Image
+                </button>
+              </div>
+            ) : imageError ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-center p-4">
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">Image generation failed</p>
+                  <a
+                    href={result.roomPreviewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary text-sm underline hover:no-underline"
+                  >
+                    Open image in new tab
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <img
+                src={`${result.roomPreviewUrl}&retry=${retryCount}`}
+                alt="Room preview"
+                className="w-full h-full object-cover"
+                onLoad={() => setImageLoading(false)}
+                onError={(e) => {
+                  setImageLoading(false);
+                  setImageError(true);
+                }}
+              />
+            )}
           </div>
 
           <div className="bg-gray-50 rounded-lg p-3 space-y-2">
