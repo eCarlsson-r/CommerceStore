@@ -2,7 +2,8 @@ export type AIEndpoint =
   | "/ai/recommendations"
   | "/ai/visual-search"
   | "/ai/assistant"
-  | "/ai/translate-draft";
+  | "/ai/translate-draft"
+  | "/ai/edit-image";
 
 export type AIRequestMeta = {
   locale?: string;
@@ -57,8 +58,19 @@ export type TranslateDraftResponse = {
   qualityHint?: "draft" | "review_needed";
 };
 
+export type EditImageRequest = AIRequestMeta & {
+  prompt: string;
+  baseImageBase64: string;
+  maskImageBase64?: string;
+};
+
+export type EditImageResponse = {
+  image_base64: string;
+};
+
 export type AIKPIEvent =
   | "ai_recommendations_served"
   | "ai_visual_search_used"
   | "ai_assistant_resolved"
-  | "ai_translation_drafted";
+  | "ai_translation_drafted"
+  | "ai_image_edited";

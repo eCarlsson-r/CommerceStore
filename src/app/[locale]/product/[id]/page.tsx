@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useWishlist } from "@/context/WishlistContext";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { WallpaperPreviewPanel } from "@/components/product/WallpaperPreviewPanel";
+import { WallpaperRoomPreview } from "@/components/ai/WallpaperRoomPreview";
 import { ProductAIInsights } from "@/components/ai/ProductAIInsights";
 import { useTranslations } from 'next-intl';
 
@@ -32,12 +32,6 @@ export default function ProductPage() {
   const handleAddToCart = () => {
     // We pass the product object + the branch details selected by the user
     if (productResponse && selectedStock) addToCart(productResponse.product, selectedStock.branch);
-  };
-
-  const handleAttachPreview = (previewId: string, previewUrl: string) => {
-    if (productResponse && selectedStock?.branch?.id) {
-      attachPreview(productResponse.product.id, selectedStock.branch.id, previewId, previewUrl);
-    }
   };
 
   if (isLoading) {
@@ -147,10 +141,9 @@ export default function ProductPage() {
             {product.description}
           </p>
 
-          <WallpaperPreviewPanel 
-            productId={product.id} 
-            productImage={product.image || (product.media?.[0]?.url ?? "")}
-            onAttachToCart={handleAttachPreview}
+          <WallpaperRoomPreview 
+            productName={product.name} 
+            productImage={product.image}
           />
 
           {/* Footer of PDP: Authenticity Guarantee */}

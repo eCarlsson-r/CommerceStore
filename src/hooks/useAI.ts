@@ -8,6 +8,7 @@ import type {
   RecommendationsRequest,
   TranslateDraftRequest,
   VisualSearchRequest,
+  EditImageRequest,
 } from "@/lib/ai/types";
 
 export function useRecommendations() {
@@ -77,6 +78,24 @@ export function useTranslateDraft() {
         qualityHint: result.qualityHint,
       });
       analytics.trackAILatency("translate", latencyMs);
+
+      return result;
+    },
+  });
+}
+
+export function useEditImage() {
+  return useMutation({
+    mutationFn: async (payload: EditImageRequest) => {
+      const startTime = performance.now();
+      const result = await aiClient.editImage(payload);
+      const latencyMs = Math.round(performance.now() - startTime);
+
+      // Track KPIs
+      analytics.trackEvent("commercial", "ai_image_edited", 1, {
+        prompt: payload.prompt.substring(0, 50),
+      });
+      analytics.trackAILatency("edit_image", latencyMs);
 
       return result;
     },
