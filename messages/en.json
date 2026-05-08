@@ -4,6 +4,7 @@
     "login": "Login",
     "logout": "Logout",
     "search": "Search",
+    "searchPlaceholder": "Search jewelry, SKU, or name...",
     "cart": "Cart",
     "wishlist": "Wishlist",
     "account": "Account",

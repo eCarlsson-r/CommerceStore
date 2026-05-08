@@ -2,10 +2,12 @@
 import { Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function SearchBox() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("common");
 
   // Local state to keep the input responsive
   const [text, setText] = useState(searchParams.get("search") || "");
@@ -36,7 +38,7 @@ export default function SearchBox() {
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Search jewelry, SKU, or name..."
+        placeholder={t("searchPlaceholder")}
         className="w-full pl-12 pr-10 py-3 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:ring-2 ring-primary/20 focus:border-primary transition-all text-sm font-medium"
       />
       <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
