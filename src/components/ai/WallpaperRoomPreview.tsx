@@ -117,7 +117,7 @@ export function WallpaperRoomPreview({
           </div>
 
           {/* 3D Scene Container */}
-          <div className="relative aspect-[16/10] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden shadow-inner border border-gray-200">
+          <div className="relative aspect-16/10 bg-linear-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden shadow-inner border border-gray-200">
             <div 
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
               style={{ perspective: '1200px' }}
@@ -138,7 +138,7 @@ export function WallpaperRoomPreview({
                     backgroundImage: `url(${productImage})`,
                     backgroundSize: '80px',
                     backgroundRepeat: 'repeat',
-                    transform: `translateZ(${-wallDepth * pxPerMeter / 2}px)`
+                    transform: `translateZ(${-wallDepth * pxPerMeter}px)`
                   }}
                 >
                   <div className="absolute inset-0 bg-black/10" />
@@ -153,7 +153,7 @@ export function WallpaperRoomPreview({
                     backgroundSize: '80px',
                     backgroundRepeat: 'repeat',
                     transformOrigin: 'left',
-                    transform: `rotateY(90deg) translateZ(${-wallDepth * pxPerMeter / 2}px)`
+                    transform: `rotateY(90deg)`
                   }}
                 >
                   <div className="absolute inset-0 bg-black/30" />
@@ -165,11 +165,11 @@ export function WallpaperRoomPreview({
                   style={{
                     height: `${wallDepth * pxPerMeter}px`,
                     transformOrigin: 'bottom',
-                    transform: `rotateX(90deg) translateZ(${-wallDepth * pxPerMeter / 2}px)`,
+                    transform: `rotateX(90deg)`,
                     backgroundImage: 'radial-gradient(circle at center, #ffffff 0%, #e2e8f0 100%)'
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-b from-black/20 to-transparent" />
                 </div>
 
                 {/* Ambient Shadow in the corner */}
@@ -177,7 +177,7 @@ export function WallpaperRoomPreview({
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     boxShadow: 'inset 40px 0 60px rgba(0,0,0,0.1)',
-                    transform: `translateZ(${-wallDepth * pxPerMeter / 2 + 1}px)`
+                    transform: `translateZ(${-wallDepth * pxPerMeter + 1}px)`
                   }}
                 />
               </div>

@@ -6,7 +6,7 @@ import type { NextRequest } from 'next/server';
 const intlMiddleware = createMiddleware({
     locales: ['en', 'id'],
     defaultLocale: 'en',
-    localePrefix: 'always',
+    localePrefix: 'as-needed',
 });
 
 // Public routes that don't require auth

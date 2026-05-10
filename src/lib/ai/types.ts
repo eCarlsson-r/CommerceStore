@@ -19,6 +19,9 @@ export type RecommendationsRequest = AIRequestMeta & {
 
 export type RecommendationItem = {
   productId: number;
+  name?: string;
+  price?: number;
+  imageUrl?: string;
   score: number;
   reason?: string;
 };

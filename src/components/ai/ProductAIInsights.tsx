@@ -1,20 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useAssistant, useRecommendations } from "@/hooks/useAI";
+import { useEffect } from "react";
+import { useRecommendations } from "@/hooks/useAI";
 
 type Props = {
   productId: number;
-  productName: string;
 };
 
-export function ProductAIInsights({ productId, productName }: Props) {
+export function ProductAIInsights({ productId }: Props) {
   const recommendations = useRecommendations();
-  const assistant = useAssistant();
-  const [message, setMessage] = useState(
-    "Will this wallpaper suit a bright living room?",
-  );
+
 
   useEffect(() => {
     recommendations.mutate({
@@ -43,41 +38,27 @@ export function ProductAIInsights({ productId, productName }: Props) {
           </p>
         )}
         {!!recommendations.data?.items.length && (
-          <ul className="space-y-1 text-sm">
+          <div className="grid grid-cols-2 gap-3 mt-3">
             {recommendations.data.items.map((item) => (
-              <li key={item.productId} className="flex justify-between">
-                <span>Product #{item.productId}</span>
-                <span className="text-gray-500">{item.score.toFixed(2)}</span>
-              </li>
+              <div key={item.productId} className="flex flex-col gap-2 rounded-xl border border-gray-100 p-2 bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <div className="aspect-square w-full rounded-lg bg-gray-100 overflow-hidden relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.imageUrl || `https://placehold.co/400x400/f1f5f9/64748b?text=${encodeURIComponent(item.name || 'Product')}`}
+                    alt={item.name || `Product #${item.productId}`}
+                    className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md text-primary text-[9px] px-1.5 py-0.5 rounded-full font-black border border-primary/10 shadow-sm">
+                    {(item.score * 100).toFixed(0)}% Match
+                  </div>
+                </div>
+                <div className="px-1 pb-1">
+                  <h4 className="text-xs font-bold text-gray-800 line-clamp-1">{item.name || `Product #${item.productId}`}</h4>
+                  <p className="text-xs text-primary font-black mt-0.5">${item.price?.toFixed(2) || '0.00'}</p>
+                </div>
+              </div>
             ))}
-          </ul>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <p className="text-xs font-bold uppercase text-gray-500">Ask assistant</p>
-        <input
-          type="text"
-          value={message}
-          onChange={(event) => setMessage(event.target.value)}
-          className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm"
-          placeholder={`Ask about ${productName}`}
-        />
-        <Button
-          className="bg-primary text-white"
-          onClick={() =>
-            assistant.mutate({
-              message,
-              context: { productId, productName },
-            })
-          }
-          disabled={assistant.isPending}
-        >
-          {assistant.isPending ? "Thinking..." : "Ask"}
-        </Button>
-
-        {assistant.data?.reply && (
-          <p className="rounded-xl bg-gray-50 p-3 text-sm">{assistant.data.reply}</p>
+          </div>
         )}
       </div>
     </section>
