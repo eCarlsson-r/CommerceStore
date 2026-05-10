@@ -72,7 +72,7 @@ export default function ProductPage() {
         {/* Left: Professional Gallery using your media[] */}
         <div className="space-y-8">
           <ImageGallery items={product.media || []} mainImage={product.image} />
-          <ProductAIInsights productId={product.id} productName={product.name} />
+          <ProductAIInsights productId={product.id} />
         </div>
 
         {/* Right: Product Info & Actions */}
