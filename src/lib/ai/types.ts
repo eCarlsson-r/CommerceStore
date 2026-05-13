@@ -65,6 +65,10 @@ export type EditImageRequest = AIRequestMeta & {
   prompt: string;
   baseImageBase64: string;
   maskImageBase64?: string;
+  /** Base64-encoded product/wallpaper texture. When provided, the backend
+   *  passes this as a REFERENCE_TYPE_STYLE image so the model applies the
+   *  actual pattern rather than guessing from the product name. */
+  productImageBase64?: string;
 };
 
 export type EditImageResponse = {

@@ -21,9 +21,33 @@ export function WallpaperRoomPreview({
   const [wallWidth, setWallWidth] = useState<number>(3.5);
   const [wallHeight, setWallHeight] = useState<number>(2.4);
   const [wallDepth, setWallDepth] = useState<number>(2.5);
+
+  // Rotation state
+  const [rotation, setRotation] = useState({ x: -15, y: -35 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editImage = useEditImage();
+
+  const handleDragStart = (clientX: number, clientY: number) => {
+    setIsDragging(true);
+    setDragStart({ x: clientX, y: clientY });
+  };
+
+  const handleDragMove = (clientX: number, clientY: number) => {
+    if (!isDragging) return;
+    const deltaX = clientX - dragStart.x;
+    const deltaY = clientY - dragStart.y;
+    
+    setRotation(prev => ({
+      x: Math.max(-60, Math.min(60, prev.x - deltaY * 0.5)),
+      y: prev.y + deltaX * 0.5
+    }));
+    setDragStart({ x: clientX, y: clientY });
+  };
+
+  const handleDragEnd = () => setIsDragging(false);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,14 +61,49 @@ export function WallpaperRoomPreview({
     reader.readAsDataURL(file);
   };
 
-  const generateAIPreview = () => {
+  /** Converts an image URL to a base64 string (data stripped). Returns null on failure. */
+  const fetchImageAsBase64 = async (url: string): Promise<string | null> => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      console.warn("⚠️ Could not fetch product image as base64:", url);
+      return null;
+    }
+  };
+
+  const generateAIPreview = async () => {
     if (!roomImage) return;
+
+    // Fetch the actual wallpaper pattern so the model uses the real texture,
+    // not just the product name from the prompt.
+    const productImageBase64 = productImage
+      ? await fetchImageAsBase64(productImage)
+      : null;
+
     editImage.mutate({
-      prompt: `Apply ${productName} wallpaper to the walls in this room, preserving furniture and lighting`,
+      prompt: productImageBase64
+        ? `Apply the wallpaper pattern shown in the style reference image to all walls in this room. Preserve all furniture, floors, and lighting exactly as they are.`
+        : `Apply ${productName} wallpaper pattern to the walls in this room, preserving furniture and lighting`,
       baseImageBase64: roomImage.split(",")[1],
+      ...(productImageBase64 ? { productImageBase64 } : {}),
     }, {
       onSuccess: (data) => {
-        setPreviewImage(`data:image/png;base64,${data.image_base64}`);
+        console.info('✅ AI Edit Success:', data);
+        if (data.image_base64) {
+          setPreviewImage(`data:image/png;base64,${data.image_base64}`);
+        } else {
+          console.error('❌ No image_base64 in response');
+        }
+      },
+      onError: (error) => {
+        console.error('❌ AI Edit Error:', error);
       }
     });
   };
@@ -117,16 +176,28 @@ export function WallpaperRoomPreview({
           </div>
 
           {/* 3D Scene Container */}
-          <div className="relative aspect-16/10 bg-linear-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden shadow-inner border border-gray-200">
+          <div 
+            className={cn(
+              "relative aspect-16/10 bg-linear-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden shadow-inner border border-gray-200 transition-all",
+              isDragging ? "cursor-grabbing" : "cursor-grab"
+            )}
+            onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
+            onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
+            onTouchStart={(e) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)}
+            onTouchMove={(e) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY)}
+            onTouchEnd={handleDragEnd}
+          >
             <div 
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
+              className="absolute inset-0 flex items-center justify-center"
               style={{ perspective: '1200px' }}
             >
               <div 
                 className="relative transition-all duration-700 ease-out"
                 style={{ 
                   transformStyle: 'preserve-3d',
-                  transform: 'rotateX(-15deg) rotateY(-35deg) translateZ(0px)',
+                  transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) translateZ(${wallDepth * pxPerMeter / 2}px)`,
                   width: `${wallWidth * pxPerMeter}px`,
                   height: `${wallHeight * pxPerMeter}px`
                 }}
@@ -184,10 +255,12 @@ export function WallpaperRoomPreview({
             </div>
 
             {/* Interaction Tooltip */}
-            <div className="absolute bottom-4 left-4 flex items-center gap-2">
+            <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-none">
               <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-gray-100 flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-[9px] font-black uppercase text-gray-600">Dynamic 3D Corner</span>
+                <span className={cn("w-2 h-2 rounded-full", isDragging ? "bg-primary animate-ping" : "bg-green-500 animate-pulse")} />
+                <span className="text-[9px] font-black uppercase text-gray-600">
+                  {isDragging ? "Rotating..." : "Click & Drag to Rotate"}
+                </span>
               </div>
             </div>
           </div>
@@ -198,11 +271,11 @@ export function WallpaperRoomPreview({
               <p className="text-[10px] font-black text-primary uppercase">Volume Calculation</p>
             </div>
             <p className="text-[9px] text-gray-600">
-              For this {wallWidth}m x {wallHeight}m room layout, you need 
+              For this {wallWidth}m x {wallHeight}m x {wallDepth}m room layout, you need 
               <span className="font-bold text-primary mx-1">
                 {Math.ceil(((wallWidth + wallDepth) * wallHeight) / 5)} rolls
               </span> 
-              to cover both visible walls.
+              to cover all walls.
             </p>
           </div>
         </div>

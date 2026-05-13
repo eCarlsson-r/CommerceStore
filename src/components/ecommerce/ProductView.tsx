@@ -43,7 +43,7 @@ export function ProductView({ product }: { product: ProductCard }) {
                 ? product.image.startsWith("http")
                     ? product.image
                     : process.env.NEXT_PUBLIC_API_URL + product.image
-                : "https://placehold.co/500x500/png"
+                : `https://placehold.co/500x500/f1f5f9/64748b?text=${encodeURIComponent(product.name || 'Product')}`
             }
             alt={product.name}
             width={500}
