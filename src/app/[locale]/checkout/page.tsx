@@ -11,7 +11,6 @@ import { AxiosError } from 'axios';
 import { useTranslations } from 'next-intl';
 
 export default function CheckoutPage() {
-  const t = useTranslations('common');
   const tc = useTranslations('checkout');
   const { cart, cartTotal, clearCart } = useCart();
   const router = useRouter();
@@ -72,7 +71,7 @@ export default function CheckoutPage() {
         {/* Left: Forms */}
         <div className="lg:col-span-7 space-y-12">
           <section>
-            <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-8">Delivery Method</h2>
+            <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-8">{tc('deliveryMethod')}</h2>
             <div className="grid grid-cols-2 gap-4">
               <button 
                 type="button"
@@ -82,8 +81,8 @@ export default function CheckoutPage() {
                     method === "shipping" ? "border-secondary bg-secondary/5" : "border-gray-100"
                 )}
               >
-                <p className="font-black uppercase text-xs">Standard Shipping</p>
-                <p className="text-[10px] text-gray-400 mt-1">Direct to your doorstep</p>
+                <p className="font-black uppercase text-xs">{tc('standardShipping')}</p>
+                <p className="text-[10px] text-gray-400 mt-1">{tc('directToYourDoorstep')}</p>
               </button>
               <button 
                 type="button"
@@ -93,20 +92,20 @@ export default function CheckoutPage() {
                     method === "pickup" ? "border-secondary bg-secondary/5" : "border-gray-100"
                 )}
               >
-                <p className="font-black uppercase text-xs">In-Store Pickup</p>
-                <p className="text-[10px] text-gray-400 mt-1">Pick up at any branch</p>
+                <p className="font-black uppercase text-xs">{tc('inStorePickup')}</p>
+                <p className="text-[10px] text-gray-400 mt-1">{tc('pickUpAtAnyBranch')}</p>
               </button>
             </div>
           </section>
 
           {method === "shipping" && (
             <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 pt-8">
-              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Select Courier</h3>
+              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">{tc('selectCourier')}</h3>
               <div className="grid grid-cols-3 gap-4">
                 {[
-                  { id: "JNE-REG", name: "JNE", desc: "2-3 Days" },
-                  { id: "JNT-EXP", name: "J&T", desc: "1-2 Days" },
-                  { id: "PVT-DLV", name: "Private", desc: "Same Day" },
+                  { id: "JNE-REG", name: "JNE", desc: tc('couriers.JNE.desc') },
+                  { id: "JNT-EXP", name: "J&T", desc: tc('couriers.JNT.desc') },
+                  { id: "PVT-DLV", name: "Private", desc: tc('couriers.PVT.desc') },
                 ].map((c) => (
                   <button
                     key={c.id}
@@ -127,16 +126,16 @@ export default function CheckoutPage() {
 
           {method === "shipping" ? (
             <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
-              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Shipping Address</h3>
+              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">{tc('shippingAddress')}</h3>
               <div className="grid grid-cols-2 gap-4">
-                <Input name="address" placeholder="STREET ADDRESS" className="col-span-2 p-6 bg-gray-50 rounded-2xl border-none text-sm" required />
-                <Input name="city" placeholder="CITY" className="p-6 bg-gray-50 rounded-2xl border-none text-sm" required />
-                <Input name="postal" placeholder="POSTAL CODE" className="p-6 bg-gray-50 rounded-2xl border-none text-sm" required />
+                <Input name="address" placeholder={tc('streetAddress')} className="col-span-2 p-6 bg-gray-50 rounded-2xl border-none text-sm" required />
+                <Input name="city" placeholder={tc('city')} className="p-6 bg-gray-50 rounded-2xl border-none text-sm" required />
+                <Input name="postal" placeholder={tc('postalCode')} className="p-6 bg-gray-50 rounded-2xl border-none text-sm" required />
               </div>
             </section>
           ) : (
             <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
-              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Select Pickup Branch</h3>
+              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">{tc('selectPickupBranch')}</h3>
               {branchesLoading ? (
                 <div className="h-14 w-full bg-gray-50 animate-pulse rounded-2xl" />
               ) : (
@@ -148,7 +147,7 @@ export default function CheckoutPage() {
                     onChange={(e) => setSelectedBranch(Number(e.target.value))}
                     className="w-full p-6 bg-gray-50 rounded-2xl border-none text-sm font-bold appearance-none cursor-pointer focus:ring-2 ring-secondary/20"
                   >
-                    <option value="">-- CHOOSE A LOCATION --</option>
+                    <option value="">{tc('chooseLocation')}</option>
                     {/* Assuming branches is an array of strings or objects based on your endpoint */}
                     {branches?.map((branch) => branch?.id && branch.id > 0 && (
                       <option key={branch.id} value={branch.id}>
@@ -163,7 +162,7 @@ export default function CheckoutPage() {
               )}
               {!isBranchValid && selectedBranch > 0 && (
                 <p className="text-[10px] font-bold text-red-500 uppercase mt-2">
-                  × One or more items are not stocked at this location.
+                  × {tc('notStockedAtLocation')}
                 </p>
               )}
             </section>
@@ -173,14 +172,14 @@ export default function CheckoutPage() {
         {/* Right: Summary */}
         <div className="lg:col-span-5">
           <div className="bg-gray-50 rounded-[3rem] p-10 sticky top-10">
-            <h2 className="text-xl font-black uppercase italic tracking-tighter mb-8">Your Selection</h2>
+            <h2 className="text-xl font-black uppercase italic tracking-tighter mb-8">{tc('yourSelection')}</h2>
             <div className="space-y-6 mb-8 max-h-[40vh] overflow-y-auto pr-2">
               {cart.map(item => (
                 <div key={`${item.id}-${item.branch.name}`} className="flex justify-between items-start text-sm">
                   <div>
                     <p className="font-bold text-primary uppercase text-xs">{item.name}</p>
                     <p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">
-                       From: {item.branch.name} • Qty: {item.quantity}
+                       {tc('from')}: {item.branch.name} • {tc('qty')}: {item.quantity}
                     </p>
                   </div>
                   <span className="font-mono text-xs">
@@ -199,7 +198,7 @@ export default function CheckoutPage() {
             
             <div className="border-t border-gray-200 pt-6 space-y-2">
               <div className="flex justify-between items-center text-gray-400 text-[10px] font-black uppercase">
-                <span>Subtotal</span>
+                <span>{tc('subtotal')}</span>
                 <span>{Number(cartTotal)
                   .toLocaleString("id-ID", {
                     style: "currency",
@@ -208,7 +207,7 @@ export default function CheckoutPage() {
                   .replace(",00", ",-")}</span>
               </div>
               <div className="flex justify-between items-end">
-                <span className="text-[10px] font-black uppercase text-primary">Total</span>
+                <span className="text-[10px] font-black uppercase text-primary">{tc('total')}</span>
                 <span className="text-3xl font-black text-secondary italic leading-none">
                   {Number(cartTotal)
                   .toLocaleString("id-ID", {
@@ -230,7 +229,7 @@ export default function CheckoutPage() {
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
               )}
             >
-              {loading ? "Processing..." : isBranchValid ? "Complete Purchase" : "Branch Mismatch"}
+              {loading ? tc('processing') : isBranchValid ? tc('completePurchase') : tc('branchMismatch')}
             </button>
           </div>
         </div>

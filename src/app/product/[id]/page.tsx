@@ -11,12 +11,11 @@ import { useState } from "react";
 import { useWishlist } from "@/context/WishlistContext";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { WallpaperRoomPreview } from "@/components/ai/WallpaperRoomPreview";
+import { WallpaperPreviewPanel } from "@/components/product/WallpaperPreviewPanel";
 import { ProductAIInsights } from "@/components/ai/ProductAIInsights";
 import { useTranslations } from 'next-intl';
 
 export default function ProductPage() {
-  const t = useTranslations('common');
   const tc = useTranslations('product');
   const params = useParams();
   const productId = params.id as string;
@@ -38,7 +37,7 @@ export default function ProductPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center">{t('loading')}...</div>
+        <div className="text-center">Loading product...</div>
       </div>
     );
   }
@@ -47,7 +46,7 @@ export default function ProductPage() {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="text-center text-red-500">
-          {t('error')}
+          Error loading product. Please try again.
         </div>
       </div>
     );
@@ -71,10 +70,7 @@ export default function ProductPage() {
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Left: Professional Gallery using your media[] */}
-        <div className="space-y-8">
-          <ImageGallery items={product.media || []} mainImage={product.image} />
-          <ProductAIInsights productId={product.id} />
-        </div>
+        <ImageGallery items={product.media || []} mainImage={product.image} />
 
         {/* Right: Product Info & Actions */}
         <div className="space-y-8">
@@ -142,10 +138,8 @@ export default function ProductPage() {
             {product.description}
           </p>
 
-          <WallpaperRoomPreview 
-            productName={product.name} 
-            productImage={product.image}
-          />
+          <WallpaperPreviewPanel productId={product.id} />
+          <ProductAIInsights productId={product.id} productName={product.name} />
 
           {/* Footer of PDP: Authenticity Guarantee */}
           <div className="pt-8 border-t border-gray-100 flex gap-6">

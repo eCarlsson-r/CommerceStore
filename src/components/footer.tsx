@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useBranches, useCategories } from "@/hooks/useDataFetchers";
 import { MapPin, Instagram, Phone, Package } from "lucide-react";
 
 export default function Footer() {
+  const t = useTranslations("footer");
   const { data: branches } = useBranches();
   const { data: categories } = useCategories();
 
@@ -21,7 +23,7 @@ export default function Footer() {
             height={50}
           />  
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] leading-loose">
-            Fine jewelry crafted for the bold. Since 2024, serving the heart of North Sumatra with 11 boutiques.
+            {t('description')}
           </p>
           <div className="flex gap-4">
             <Instagram size={18} className="text-gray-400 hover:text-primary cursor-pointer" />
@@ -31,7 +33,7 @@ export default function Footer() {
 
         {/* Boutiques Column */}
         <div>
-          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">Our Boutiques</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">{t('ourBoutiques')}</h3>
           <div className="grid gap-y-3 gap-x-4">
             {branches?.map((branch, index) => index < 5 && (
               <Link key={branch.id} href={`/locations/${branch.id}`} className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase hover:text-primary transition-colors cursor-pointer">
@@ -43,7 +45,7 @@ export default function Footer() {
 
         {/* Categories Column */}
         <div>
-          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">Our Categories</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">{t('ourCategories')}</h3>
           <div className="grid gap-y-3 gap-x-4">
             {categories?.map((category, index) => index < 5 && (
               <Link href={`/shop?category=${category.slug}`} key={category.id} className="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase hover:text-primary transition-colors cursor-pointer">
@@ -55,15 +57,15 @@ export default function Footer() {
 
         {/* Client Care */}
         <div>
-          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">Client Care</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-widest mb-8">{t('clientCare')}</h3>
           <ul className="space-y-4 text-[10px] font-bold text-gray-500 uppercase">
             <li className="hover:text-primary cursor-pointer">
-              <Link href="/wishlist">My Wishlist</Link>
+              <Link href="/wishlist">{t('myWishlist')}</Link>
             </li>
-            <li className="hover:text-primary cursor-pointer">Shipping & Returns</li>
-            <li className="hover:text-primary cursor-pointer">Authenticity Guarantee</li>
+            <li className="hover:text-primary cursor-pointer">{t('shippingReturns')}</li>
+            <li className="hover:text-primary cursor-pointer">{t('authenticityGuarantee')}</li>
             <li className="hover:text-primary cursor-pointer">
-              <Link href="/locations">Visit our Branches</Link>
+              <Link href="/locations">{t('visitBranches')}</Link>
             </li>
           </ul>
         </div>
@@ -71,7 +73,7 @@ export default function Footer() {
 
       <div className="container mx-auto px-4 mt-20 pt-8 border-t border-gray-50 text-center">
         <p className="text-[8px] font-black text-gray-300 uppercase tracking-widest">
-          &copy; 2026 Carlsson Digital Commerce. All Rights Reserved.
+          {t('copyright')}
         </p>
       </div>
     </footer>

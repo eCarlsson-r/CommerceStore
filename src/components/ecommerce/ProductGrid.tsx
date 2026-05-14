@@ -3,8 +3,10 @@ import { ProductView } from "./ProductView";
 import { ProductCard } from "@/lib/types";
 import { Search } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export function ProductGrid({ products }: { products: ProductCard[] }) {
+  const t = useTranslations('common');
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -12,17 +14,16 @@ export function ProductGrid({ products }: { products: ProductCard[] }) {
           <Search className="w-12 h-12 text-gray-200" />
         </div>
         <h2 className="text-xl font-black uppercase italic tracking-tight">
-          No results found
+          {t('noResultsFound')}
         </h2>
         <p className="text-gray-400 text-sm mt-2 max-w-xs">
-          We could not find anything matching your filters. Try adjusting your
-          price range or search term.
+          {t('noResultsDescription')}
         </p>
         <Link
           href="/shop"
           className="mt-8 px-8 py-4 bg-primary text-white rounded-2xl font-black uppercase text-[10px] shadow-xl"
         >
-          Clear All Filters
+          {t('clearAllFilters')}
         </Link>
       </div>
     );

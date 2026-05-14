@@ -8,8 +8,6 @@ import type {
   TranslateDraftResponse,
   VisualSearchRequest,
   VisualSearchResponse,
-  EditImageRequest,
-  EditImageResponse,
 } from "@/lib/ai/types";
 
 export const aiClient = {
@@ -43,11 +41,6 @@ export const aiClient = {
       "/ai/translate-draft",
       payload,
     );
-    return data;
-  },
-
-  async editImage(payload: EditImageRequest): Promise<EditImageResponse> {
-    const { data } = await api.post<EditImageResponse>("/ai/edit-image", payload);
     return data;
   },
 };

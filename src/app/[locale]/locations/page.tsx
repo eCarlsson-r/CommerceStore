@@ -30,7 +30,7 @@ export default function LocationsPage() {
             <div className="mt-8 flex justify-between items-center">
                <div className="text-[10px] font-black uppercase tracking-tighter">
                   <p className="opacity-40">{t('openingHours')}</p>
-                  <p>10:00 - 22:00 WIB</p>
+                  <p>{t('dailyHours')}</p>
                </div>
                <Button 
                  onClick={() => handleGetDirections(branch.name, branch.address)}

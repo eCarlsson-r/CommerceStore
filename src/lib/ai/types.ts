@@ -2,8 +2,7 @@ export type AIEndpoint =
   | "/ai/recommendations"
   | "/ai/visual-search"
   | "/ai/assistant"
-  | "/ai/translate-draft"
-  | "/ai/edit-image";
+  | "/ai/translate-draft";
 
 export type AIRequestMeta = {
   locale?: string;
@@ -19,9 +18,6 @@ export type RecommendationsRequest = AIRequestMeta & {
 
 export type RecommendationItem = {
   productId: number;
-  name?: string;
-  price?: number;
-  imageUrl?: string;
   score: number;
   reason?: string;
 };
@@ -37,6 +33,11 @@ export type VisualSearchRequest = AIRequestMeta & {
 
 export type VisualSearchResponse = {
   items: RecommendationItem[];
+  visualSearchMetadata?: {
+    imageProcessed: boolean;
+    inferredTags?: string[];
+    confidence?: number;
+  };
 };
 
 export type AssistantRequest = AIRequestMeta & {
@@ -47,6 +48,8 @@ export type AssistantRequest = AIRequestMeta & {
 export type AssistantResponse = {
   reply: string;
   followUps?: string[];
+  conversationId?: string;
+  suggestedProducts?: RecommendationItem[];
 };
 
 export type TranslateDraftRequest = AIRequestMeta & {
@@ -59,25 +62,20 @@ export type TranslateDraftRequest = AIRequestMeta & {
 export type TranslateDraftResponse = {
   translatedText: string;
   qualityHint?: "draft" | "review_needed";
-};
-
-export type EditImageRequest = AIRequestMeta & {
-  prompt: string;
-  baseImageBase64: string;
-  maskImageBase64?: string;
-  /** Base64-encoded product/wallpaper texture. When provided, the backend
-   *  passes this as a REFERENCE_TYPE_STYLE image so the model applies the
-   *  actual pattern rather than guessing from the product name. */
-  productImageBase64?: string;
-};
-
-export type EditImageResponse = {
-  image_base64: string;
+  locales?: {
+    source: string;
+    target: string;
+  };
+  metadata?: {
+    characterCount?: number;
+    wordCount?: number;
+    requiresReview?: boolean;
+    isEmpty?: boolean;
+  };
 };
 
 export type AIKPIEvent =
   | "ai_recommendations_served"
   | "ai_visual_search_used"
   | "ai_assistant_resolved"
-  | "ai_translation_drafted"
-  | "ai_image_edited";
+  | "ai_translation_drafted";

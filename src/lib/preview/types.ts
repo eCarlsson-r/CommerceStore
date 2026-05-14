@@ -1,29 +1,23 @@
-export type RoomWall = "front" | "back" | "left" | "right" | "all";
+export type Point2D = {
+  x: number;
+  y: number;
+};
 
-export type RoomDimensions = {
-  width: number;  // meters
-  height: number; // meters
-  depth: number;  // meters
+export type WallPolygon = {
+  points: Point2D[];
 };
 
 export type WallpaperPreviewRequest = {
   productId: number;
-  productImage: string;
-  roomDimensions: RoomDimensions;
-  selectedWall: RoomWall;
+  imageUrl: string;
+  wallPolygon: WallPolygon;
   tileScale: number;
-  patternRepeat?: number; // cm
+  blendIntensity: number;
 };
 
 export type WallpaperPreviewResult = {
   previewId: string;
-  roomPreviewUrl: string;
-  wallCoverage: {
-    wall: RoomWall;
-    width: number;  // meters covered
-    height: number; // meters covered
-    rollsNeeded: number;
-  }[];
+  composedImageUrl: string;
   renderMs: number;
   warnings: string[];
 };

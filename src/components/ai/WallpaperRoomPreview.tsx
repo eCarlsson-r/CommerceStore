@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Camera, RefreshCw, Ruler, LayoutGrid, Box } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export function WallpaperRoomPreview({ 
   productName,
@@ -29,6 +30,7 @@ export function WallpaperRoomPreview({
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editImage = useEditImage();
+  const t = useTranslations("assistant");
 
   const handleDragStart = (clientX: number, clientY: number) => {
     setIsDragging(true);
@@ -116,7 +118,7 @@ export function WallpaperRoomPreview({
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Box className="text-primary w-5 h-5" />
-          <h2 className="text-xs font-black uppercase tracking-widest text-gray-500">3D Interactive Preview</h2>
+          <h2 className="text-xs font-black uppercase tracking-widest text-gray-500">{t('volumeCalculation')}</h2>
         </div>
         
         <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-100">
@@ -128,7 +130,7 @@ export function WallpaperRoomPreview({
             )}
           >
             <Ruler className="w-3 h-3" />
-            3D Room
+            {t('dimensionsMode')}
           </button>
           <button 
             onClick={() => setViewMode('upload')}
@@ -138,7 +140,7 @@ export function WallpaperRoomPreview({
             )}
           >
             <Camera className="w-3 h-3" />
-            AI In-Situ
+            {t('aiInSituMode')}
           </button>
         </div>
       </div>
@@ -147,7 +149,7 @@ export function WallpaperRoomPreview({
         <div className="space-y-6">
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[9px] font-black uppercase tracking-tight text-gray-400">Width (m)</label>
+              <label className="text-[9px] font-black uppercase tracking-tight text-gray-400">{t('widthMeters')}</label>
               <input 
                 type="number" 
                 value={wallWidth} 
@@ -156,7 +158,7 @@ export function WallpaperRoomPreview({
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[9px] font-black uppercase tracking-tight text-gray-400">Height (m)</label>
+              <label className="text-[9px] font-black uppercase tracking-tight text-gray-400">{t('heightMeters')}</label>
               <input 
                 type="number" 
                 value={wallHeight} 
@@ -165,7 +167,7 @@ export function WallpaperRoomPreview({
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[9px] font-black uppercase tracking-tight text-gray-400">Depth (m)</label>
+              <label className="text-[9px] font-black uppercase tracking-tight text-gray-400">{t('depthMeters')}</label>
               <input 
                 type="number" 
                 value={wallDepth} 
@@ -259,7 +261,7 @@ export function WallpaperRoomPreview({
               <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-gray-100 flex items-center gap-2">
                 <span className={cn("w-2 h-2 rounded-full", isDragging ? "bg-primary animate-ping" : "bg-green-500 animate-pulse")} />
                 <span className="text-[9px] font-black uppercase text-gray-600">
-                  {isDragging ? "Rotating..." : "Click & Drag to Rotate"}
+                  {isDragging ? t('rotating') : t('clickDragToRotate')}
                 </span>
               </div>
             </div>
@@ -268,14 +270,15 @@ export function WallpaperRoomPreview({
           <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
             <div className="flex items-center gap-2 mb-1">
               <LayoutGrid className="w-3 h-3 text-primary" />
-              <p className="text-[10px] font-black text-primary uppercase">Volume Calculation</p>
+              <p className="text-[10px] font-black text-primary uppercase">{t('volumeCalculation')}</p>
             </div>
             <p className="text-[9px] text-gray-600">
-              For this {wallWidth}m x {wallHeight}m x {wallDepth}m room layout, you need 
-              <span className="font-bold text-primary mx-1">
-                {Math.ceil(((wallWidth + wallDepth) * wallHeight) / 5)} rolls
-              </span> 
-              to cover all walls.
+              {t('volumeResult', {
+                width: wallWidth,
+                height: wallHeight,
+                depth: wallDepth,
+                rolls: Math.ceil(((wallWidth + wallDepth) * wallHeight) / 5),
+              })}
             </p>
           </div>
         </div>
@@ -288,7 +291,7 @@ export function WallpaperRoomPreview({
               className="aspect-video bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-all group"
             >
               <Camera className="w-10 h-10 text-gray-300 group-hover:text-primary mb-3" />
-              <p className="text-xs font-bold text-gray-400 group-hover:text-gray-600">Upload your room photo</p>
+              <p className="text-xs font-bold text-gray-400 group-hover:text-gray-600">{t('uploadYourRoomPhoto')}</p>
               <input 
                 type="file" 
                 ref={fileInputRef} 
@@ -302,14 +305,14 @@ export function WallpaperRoomPreview({
               <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-900 shadow-inner">
                 <Image 
                   src={previewImage || roomImage} 
-                  alt="Room preview" 
+                  alt={t('roomPreviewAlt')} 
                   fill 
                   className="object-cover"
                 />
                 {editImage.isPending && (
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center text-white">
                     <RefreshCw className="w-8 h-8 animate-spin mb-2" />
-                    <p className="text-[10px] font-black uppercase tracking-widest">Applying Wallpaper...</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest">{t('applyingWallpaper')}</p>
                   </div>
                 )}
               </div>
@@ -320,7 +323,7 @@ export function WallpaperRoomPreview({
                   onClick={generateAIPreview}
                   disabled={editImage.isPending}
                 >
-                  {previewImage ? 'Try Different Style' : 'Generate AI In-Situ'}
+                  {previewImage ? t('tryDifferentStyle') : t('generateAIPreview')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -328,7 +331,7 @@ export function WallpaperRoomPreview({
                   onClick={() => { setRoomImage(null); setPreviewImage(null); }}
                   disabled={editImage.isPending}
                 >
-                  Reset
+                  {t('reset')}
                 </Button>
               </div>
             </div>

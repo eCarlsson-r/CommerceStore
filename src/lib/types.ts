@@ -193,9 +193,4 @@ export interface CartItem extends ProductCard {
   cart_item_id?: number;
   quantity: number;
   branch: Branch;   // Use ID for precise matching
-  preview?: {
-    previewId: string;
-    previewUrl: string;
-    attachedAt: string;
-  };
 }

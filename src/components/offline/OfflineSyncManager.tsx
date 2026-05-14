@@ -7,7 +7,7 @@ import { flushOfflineQueue, getOfflineQueue } from "@/lib/offline/queue";
 export default function OfflineSyncManager() {
   useEffect(() => {
     const runSync = async () => {
-      const queue = await getOfflineQueue();
+      const queue = getOfflineQueue();
       if (!queue.length) return;
 
       const result = await flushOfflineQueue();

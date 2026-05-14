@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Category, ProductCard } from "@/lib/types";
 import { PriceFilter } from "./PriceFilter";
 import { VisualSearchBar } from "./ai/VisualSearchBar";
@@ -21,6 +21,7 @@ export default function Sidebar({
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = useLocale();
+  const t = useTranslations('common');
 
   const safeMin = Number(priceBounds?.min) || 0;
   const safeMax = Number(priceBounds?.max) || 10000000;
@@ -124,7 +125,7 @@ export default function Sidebar({
 
       <div className="pt-6 border-t border-gray-100">
         <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">
-          Price Range
+          {t('priceRange')}
         </h3>
         <PriceFilter
           minPrice={safeMin}
@@ -140,7 +141,7 @@ export default function Sidebar({
             }}
             className="w-full mt-4 py-2 text-[9px] font-black uppercase text-gray-400 border border-gray-100 rounded-xl hover:bg-gray-50"
           >
-            Reset Price
+            {t('resetPrice')}
           </button>
         )}
       </div>
