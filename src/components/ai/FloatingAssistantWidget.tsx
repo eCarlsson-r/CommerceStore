@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 export function FloatingAssistantWidget() {
   const t = useTranslations("assistant");
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("Help me choose wallpaper for my bedroom.");
+  const [message, setMessage] = useState(t('defaultMessage'));
   const assistant = useAssistant();
 
   return (

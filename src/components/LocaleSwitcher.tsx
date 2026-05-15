@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   Select,
   SelectContent,
@@ -14,6 +14,7 @@ export function LocaleSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations('common');
 
   const handleLocaleChange = (newLocale: string) => {
     // Remove the current locale from pathname and add the new one
@@ -25,12 +26,12 @@ export function LocaleSwitcher() {
 
   return (
     <Select value={locale} onValueChange={handleLocaleChange}>
-      <SelectTrigger className="w-fit bg-muted text-[10px] !h-5">
+      <SelectTrigger className="w-fit bg-muted text-[10px] h-5!">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="en">English</SelectItem>
-        <SelectItem value="id">Bahasa Indonesia</SelectItem>
+        <SelectItem value="en">{t('english')}</SelectItem>
+        <SelectItem value="id">{t('bahasaIndonesia')}</SelectItem>
       </SelectContent>
     </Select>
   );

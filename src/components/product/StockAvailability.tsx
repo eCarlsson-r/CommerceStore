@@ -1,13 +1,16 @@
 import { Branch } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export function StockAvailability({ stocks, selectedStock, setSelectedStock }: { stocks: {branch: Branch, quantity: number}[], selectedStock: {branch: Branch, quantity: number} | undefined, setSelectedStock: (stock: {branch: Branch, quantity: number} | undefined) => void }) {
+  const t = useTranslations('stores');
+
   return (
     <div className="bg-gray-50 rounded-[2rem] p-6 border border-gray-100">
       <div className="flex items-center gap-2 mb-4">
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
         <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-          Check Store Availability
+          {t('checkStoreAvailability')}
         </h3>
       </div>
 
@@ -31,7 +34,7 @@ export function StockAvailability({ stocks, selectedStock, setSelectedStock }: {
             <span
               className={`text-[10px] font-black ${s.quantity > 0 ? "text-green-600" : "text-red-300"}`}
             >
-              {s.quantity > 0 ? `${s.quantity} IN STOCK` : "OUT OF STOCK"}
+              {s.quantity > 0 ? `${s.quantity} ${t('inStock')}` : t('outOfStock')}
             </span>
           </button>
         ))}

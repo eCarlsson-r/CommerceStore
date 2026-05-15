@@ -1,36 +1,43 @@
 "use client";
 import { Search, X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 export default function SearchBox() {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const t = useTranslations("common");
 
-  // Local state to keep the input responsive
   const [text, setText] = useState(searchParams.get("search") || "");
 
-  // Inside SearchBox.tsx
   useEffect(() => {
-    // Only trigger redirect if the text actually differs from the URL
-    // and we have a query worth searching for.
-    const isDifferent = text !== (searchParams.get("search") || "");
+    const currentSearch = searchParams.get("search") || "";
+    const isDifferent = text !== currentSearch;
 
-    const delayDebounceFn = setTimeout(() => {
-      if (isDifferent) {
-        const params = new URLSearchParams(searchParams.toString());
-        if (text) params.set("search", text);
-        else params.delete("search");
-
-        // Navigate to shop ONLY if we have a query or were already on the shop page
-        router.push(`/shop?${params.toString()}`);
+    const timeout = setTimeout(() => {
+      if (!isDifferent) {
+        return;
       }
-    }, 500);
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [text, router, searchParams]); // Only track 'text' to prevent loop from searchParams changes
+      const params = new URLSearchParams(searchParams.toString());
+      if (text) {
+        params.set("search", text);
+      } else {
+        params.delete("search");
+      }
+
+      const queryString = params.toString();
+      const candidateLocale = pathname?.split("/")[1];
+      const supportedLocales = ["en", "id"];
+      const hasLocale = supportedLocales.includes(candidateLocale || "");
+      const basePath = hasLocale ? `/${candidateLocale}/shop` : "/shop";
+      router.push(queryString ? `${basePath}?${queryString}` : basePath);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [text, searchParams, pathname, router]);
 
   return (
     <div className="relative group w-full max-w-md">

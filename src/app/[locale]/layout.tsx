@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { getMessages } from 'next-intl/server';
 import { I18nProvider } from '@/components/providers/I18nProvider';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
@@ -14,7 +13,7 @@ import { FloatingAssistantWidget } from '@/components/ai/FloatingAssistantWidget
 import enMessages from '../../../messages/en.json';
 import idMessages from '../../../messages/id.json';
 
-const messagesByLocale: Record<string, any> = {
+const messagesByLocale: Record<string, typeof enMessages> = {
   en: enMessages,
   id: idMessages,
 };
@@ -41,7 +40,7 @@ export default async function LocaleLayout({ children, params }: Props) {
                   {children}
                 </main>
                 <Footer />
-                <Toaster />
+                <Toaster position="top-right" richColors />
                 <FloatingAssistantWidget />
               </WishlistProvider>
             </CartProvider>

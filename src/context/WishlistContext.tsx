@@ -4,6 +4,7 @@ import { ProductCard } from "@/lib/types";
 import api from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface WishlistContextType {
   wishlist: ProductCard[];
@@ -14,6 +15,7 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("wishlist");
   const [wishlist, setWishlist] = useState<ProductCard[]>([]);
   const { user } = useAuth();
 
@@ -37,10 +39,10 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
     if (exists) {
       newWishlist = wishlist.filter((item) => item.id !== product.id);
-      toast.info("Removed from wishlist");
+      toast.info(t("removed"));
     } else {
       newWishlist = [...wishlist, product];
-      toast.success("Added to wishlist");
+      toast.success(t("added"));
     }
 
     setWishlist(newWishlist);

@@ -18,13 +18,13 @@ export default function LocationsPage() {
 
   return (
     <div className="container mx-auto px-6 py-20">
-      <h1 className="text-5xl font-black uppercase italic italic mb-4 tracking-tighter">{t('ourLocations')}</h1>
+      <h1 className="text-5xl font-black uppercase italic mb-4 tracking-tighter">{t('ourLocations')}</h1>
       <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-16">{t('visitOutlets')}</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {branches?.map(branch => (
           <div key={branch.id} className="p-8 bg-gray-50 rounded-[3rem] border border-gray-100 hover:border-primary transition-all group">
-            <h3 className="text-xl font-black uppercase italic italic group-hover:text-primary transition-colors">{branch.name}</h3>
+            <h3 className="text-xl font-black uppercase italic group-hover:text-primary transition-colors">{branch.name}</h3>
             <p className="text-[11px] font-bold text-gray-400 uppercase mt-2 tracking-widest leading-loose">{branch.address}</p>
             
             <div className="mt-8 flex justify-between items-center">

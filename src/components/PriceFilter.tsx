@@ -1,33 +1,30 @@
 "use client";
 
 import { Slider } from "@/components/ui/slider";
-import { useMemo } from "react";
 
 export function PriceFilter({
   onCommit,
   minPrice,
   maxPrice,
-  currentMin,
-  currentMax,
+  value,
+  onChange,
 }: {
   onCommit: (values: number[]) => void;
   minPrice: number;
   maxPrice: number;
-  currentMin: number;
-  currentMax: number;
+  value: [number, number];
+  onChange: (value: [number, number]) => void;
 }) {
-  const range = useMemo(() => [currentMin, currentMax], [currentMin, currentMax]);
-
   const dynamicStep = (maxPrice - minPrice) / 100;
 
   return (
     <div className="space-y-6">
       <Slider
-        value={range}
+        value={value}
         min={minPrice}
         max={maxPrice}
         step={dynamicStep}
-        onValueChange={onCommit}
+        onValueChange={onChange}
         onValueCommit={onCommit}
         className="py-4"
       />
@@ -38,7 +35,7 @@ export function PriceFilter({
             Min Price
           </span>
           <span className="text-[11px] font-bold text-primary italic">
-            {Number(range[0])
+            {Number(value[0])
               .toLocaleString("id-ID", {
                 style: "currency",
                 currency: "IDR",
@@ -54,7 +51,7 @@ export function PriceFilter({
             Max Price
           </span>
           <span className="text-[11px] font-bold text-primary italic">
-            {Number(range[1])
+            {Number(value[1])
               .toLocaleString("id-ID", {
                 style: "currency",
                 currency: "IDR",

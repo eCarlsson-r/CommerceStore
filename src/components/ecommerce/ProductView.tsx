@@ -8,8 +8,10 @@ import { toast } from "sonner";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useWishlist } from "@/context/WishlistContext";
+import { useAuth } from "@/hooks/useAuth";
 
 export function ProductView({ product }: { product: ProductCard }) {
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const active = isInWishlist(product.id);
@@ -27,7 +29,7 @@ export function ProductView({ product }: { product: ProductCard }) {
   };
 
   return (
-    <div className="group relative bg-white border border-gray-100 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500">
+    <Link href={`/product/${product.id}`} className="group relative bg-white border border-gray-100 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500">
       {/* Discount Badge */}
       {product.discount > 0 && (
         <div className="absolute top-4 left-4 z-10 bg-red-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">
@@ -35,23 +37,21 @@ export function ProductView({ product }: { product: ProductCard }) {
         </div>
       )}
 
-      <Link href={`/product/${product.id}`}>
-        <div className="aspect-square bg-gray-50 overflow-hidden">
-          <Image
-            src={
-              product.image
-                ? product.image.startsWith("http")
-                    ? product.image
-                    : process.env.NEXT_PUBLIC_API_URL + product.image
-                : `https://placehold.co/500x500/f1f5f9/64748b?text=${encodeURIComponent(product.name || 'Product')}`
-            }
-            alt={product.name}
-            width={500}
-            height={500}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          />
-        </div>
-      </Link>
+      <div className="aspect-square bg-gray-50 overflow-hidden">
+        <Image
+          src={
+            product.image
+              ? product.image.startsWith("http")
+                  ? product.image
+                  : process.env.NEXT_PUBLIC_API_URL + product.image
+              : `https://placehold.co/500x500/f1f5f9/64748b?text=${encodeURIComponent(product.name || 'Product')}`
+          }
+          alt={product.name}
+          width={500}
+          height={500}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+        />
+      </div>
       
       <div className="p-6 text-center">
         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
@@ -72,14 +72,16 @@ export function ProductView({ product }: { product: ProductCard }) {
         </div>
 
         {/* Corrected onClick and added event passing */}
-        <Button
-          onClick={handleAddToCart}
-          className="mt-6 w-full py-6 bg-primary text-white rounded-xl text-[10px] font-black uppercase hover:bg-secondary transition-all active:scale-95"
-        >
-          Add to Bag
-        </Button>
+        {user && (
+          <Button
+            onClick={handleAddToCart}
+            className="mt-6 w-full py-6 bg-primary text-white rounded-xl text-[10px] font-black uppercase hover:bg-secondary transition-all active:scale-95"
+          >
+            Add to Bag
+          </Button>
+        )}
 
-        <Button 
+        {user && (<Button 
           onClick={(e) => {
             e.preventDefault();
             toggleWishlist(product);
@@ -93,8 +95,8 @@ export function ProductView({ product }: { product: ProductCard }) {
               active ? "fill-red-500 text-red-500" : "text-gray-400"
             )} 
           />
-        </Button>
+        </Button>)}
       </div>
-    </div>
+    </Link>
   );
 }

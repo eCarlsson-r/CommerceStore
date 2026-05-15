@@ -14,6 +14,7 @@ import Link from "next/link";
 import { WallpaperRoomPreview } from "@/components/ai/WallpaperRoomPreview";
 import { ProductAIInsights } from "@/components/ai/ProductAIInsights";
 import { useTranslations } from 'next-intl';
+import { toast } from "sonner";
 
 export default function ProductPage() {
   const t = useTranslations('common');
@@ -33,6 +34,7 @@ export default function ProductPage() {
   const handleAddToCart = () => {
     // We pass the product object + the branch details selected by the user
     if (productResponse && selectedStock) addToCart(productResponse.product, selectedStock.branch);
+    else toast.error(t('selectBranch'));
   };
 
   if (isLoading) {
@@ -57,7 +59,10 @@ export default function ProductPage() {
   const branchStocks = productResponse.stocks;
 
   const handleWhatsAppInquiry = () => {
-    if (!product || !selectedStock) return;
+    if (!product || !selectedStock) {
+      toast.error(t('selectBranch'));
+      return;
+    }
 
     const phoneNumber = selectedStock.branch.phone; // Ensure this is in international format (e.g., 6281...)
     const message = encodeURIComponent(
@@ -73,7 +78,7 @@ export default function ProductPage() {
         {/* Left: Professional Gallery using your media[] */}
         <div className="space-y-8">
           <ImageGallery items={product.media || []} mainImage={product.image} />
-          <ProductAIInsights productId={product.id} />
+          <ProductAIInsights productId={product.id} productName={product.name} />
         </div>
 
         {/* Right: Product Info & Actions */}

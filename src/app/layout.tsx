@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import QueryProvider from "@/providers/query-provider";
-import { Toaster } from "sonner";
-import { AuthProvider } from "@/hooks/useAuth";
-import { CartProvider } from "@/context/CartContext";
-import { WishlistProvider } from "@/context/WishlistContext";
-import { PWAProvider } from "@/components/pwa/PWAManager";
 import OfflineSyncManager from "@/components/offline/OfflineSyncManager";
-import { FloatingAssistantWidget } from "@/components/ai/FloatingAssistantWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,24 +28,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <AuthProvider>
-            <PWAProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <OfflineSyncManager />
-                  <Header />
-                  <main className="min-h-screen container mx-auto px-4">
-                    {children}
-                  </main>
-                  <Footer />
-                  <FloatingAssistantWidget />
-                  <Toaster position="top-right" richColors />
-                </WishlistProvider>
-              </CartProvider>
-            </PWAProvider>
-          </AuthProvider>
-        </QueryProvider>
+        <OfflineSyncManager />
+        {children}
       </body>
     </html>
   );

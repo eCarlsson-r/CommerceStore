@@ -1,17 +1,19 @@
 import { OrderWithRelations } from "@/lib/types";
+import { useTranslations } from "next-intl";
 
 export function OrderProgress({ order }: { order: OrderWithRelations }) {
+  const t = useTranslations('account');
   const steps = order.delivery_details 
     ? [
-        { id: 'pending', label: 'Order Placed', icon: 'Check' },
-        { id: 'processing', label: 'Preparing', icon: 'Package' },
-        { id: 'shipped', label: 'Shipped', icon: 'Truck' },
-        { id: 'completed', label: 'Delivered', icon: 'Home' }
+        { id: 'pending', label: t('orderPlaced'), icon: 'Check' },
+        { id: 'processing', label: t('preparing'), icon: 'Package' },
+        { id: 'shipped', label: t('shipped'), icon: 'Truck' },
+        { id: 'completed', label: t('delivered'), icon: 'Home' }
     ] : [
-        { id: 'pending', label: 'Order Placed', icon: 'Check' },
-        { id: 'processing', label: 'Boutique Preparing', icon: 'Sparkles' },
-        { id: 'shipped', label: 'Ready at Boutique', icon: 'MapPin' },
-        { id: 'completed', label: 'Collected', icon: 'Gift' }
+        { id: 'pending', label: t('orderPlaced'), icon: 'Check' },
+        { id: 'processing', label: t('boutiquePreparing'), icon: 'Sparkles' },
+        { id: 'shipped', label: t('readyAtBoutique'), icon: 'MapPin' },
+        { id: 'completed', label: t('collected'), icon: 'Gift' }
     ];
 
   const currentStep = steps.findIndex(s => s.id === order.status);
@@ -23,9 +25,9 @@ export function OrderProgress({ order }: { order: OrderWithRelations }) {
           <span className="font-black text-xl">!</span>
         </div>
         <div>
-          <h4 className="text-xs font-black uppercase text-red-600">Order Cancelled</h4>
+          <h4 className="text-xs font-black uppercase text-red-600">{t('orderCancelledTitle')}</h4>
           <p className="text-[10px] text-red-400 font-bold uppercase mt-1">
-            This transaction was voided. Any funds held will be released per bank policy.
+            {t('orderCancelledDescription')}
           </p>
         </div>
       </div>
@@ -35,7 +37,7 @@ export function OrderProgress({ order }: { order: OrderWithRelations }) {
   return (
     <div className="flex items-center justify-between w-full mt-3">
       <p className="text-[10px] text-gray-400 uppercase mt-1">
-        Status:{" "}
+        {t('status')}
       </p>
       {steps.map((step, idx) => (
         <div key={step.id} className="flex flex-col items-center flex-1 relative">

@@ -2,6 +2,8 @@ import api from "@/lib/api";
 import type {
   AssistantRequest,
   AssistantResponse,
+  EditImageRequest,
+  EditImageResponse,
   RecommendationsRequest,
   RecommendationsResponse,
   TranslateDraftRequest,
@@ -43,4 +45,12 @@ export const aiClient = {
     );
     return data;
   },
+
+  async editImage(payload: EditImageRequest): Promise<EditImageResponse> {
+    const { data } = await api.post<EditImageResponse>(
+      "/ai/edit-image",
+      payload,
+    );
+    return data;
+  }
 };

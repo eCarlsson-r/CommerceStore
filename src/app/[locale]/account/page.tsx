@@ -10,8 +10,10 @@ import { useOrders } from "@/hooks/useDataFetchers";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
+import { useTranslations } from 'next-intl';
 
 export default function AccountPage() {
+  const t = useTranslations('account');
   const { user, loading } = useAuth();
   const { data: orders } = useOrders();
   const [activeTab, setActiveTab] = useState("profile");
@@ -36,13 +38,13 @@ export default function AccountPage() {
   if (loading)
     return (
       <div className="py-24 text-center font-black uppercase animate-pulse">
-        Opening your lounge...
+        {t('openingLounge')}
       </div>
     );
   if (!user)
     return (
       <div className="py-24 text-center font-black uppercase">
-        Please login to view your account.
+        {t('pleaseLogin')}
       </div>
     );
 
@@ -53,7 +55,7 @@ export default function AccountPage() {
         <aside className="w-full lg:w-64 space-y-2">
           <div className="mb-8">
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-              Member Since
+              {t('memberSince')}
             </p>
             <p className="text-sm font-bold italic">
               {user.customer.created_at && new Date(user.customer.created_at).getFullYear()}
@@ -69,7 +71,7 @@ export default function AccountPage() {
                 : "text-gray-400 hover:bg-gray-50",
             )}
           >
-            <User className="w-4 h-4" /> Profile Details
+            <User className="w-4 h-4" /> {t('profileDetails')}
           </button>
 
           <button
@@ -81,7 +83,7 @@ export default function AccountPage() {
                 : "text-gray-400 hover:bg-gray-50",
             )}
           >
-            <Package className="w-4 h-4" /> My Orders
+            <Package className="w-4 h-4" /> {t('myOrders')}
           </button>
         </aside>
 
@@ -94,21 +96,21 @@ export default function AccountPage() {
                 <div className="flex justify-between items-end">
                   <div>
                     <h2 className="text-2xl font-black uppercase italic tracking-tighter">
-                      Profile Details
+                      {t('profileDetails')}
                     </h2>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
-                      Manage your identity
+                      {t('manageIdentity')}
                     </p>
                   </div>
                   <button className="bg-primary text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase hover:scale-105 transition-all">
-                    Save Changes
+                    {t('saveChanges')}
                   </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase ml-1">
-                      Full Name
+                      {t('fullName')}
                     </label>
                     <Input
                       defaultValue={user.customer.name}
@@ -117,7 +119,7 @@ export default function AccountPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase ml-1">
-                      Email (Username)
+                      {t('emailUsername')}
                     </label>
                     <Input
                       defaultValue={user.customer.email || ""}
@@ -127,7 +129,7 @@ export default function AccountPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase ml-1">
-                      Mobile
+                      {t('mobile')}
                     </label>
                     <Input
                       defaultValue={user.customer.mobile || ""}
@@ -136,11 +138,11 @@ export default function AccountPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase ml-1">
-                      Gender
+                      {t('gender')}
                     </label>
                     <select value={user.customer.gender || "M"} disabled className="w-full rounded-xl bg-gray-50 border-none p-4 text-sm font-bold">
-                      <option value="M">Male</option>
-                      <option value="F">Female</option>
+                        <option value="M">{t('male')}</option>
+                        <option value="F">{t('female')}</option>
                     </select>
                   </div>
                 </div>
@@ -155,12 +157,12 @@ export default function AccountPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Input
                     type="password"
-                    placeholder="NEW PASSWORD"
+                    placeholder={t('newPassword')}
                     className="rounded-xl bg-gray-50 border-none p-6"
                   />
                   <Input
                     type="password"
-                    placeholder="CONFIRM NEW PASSWORD"
+                    placeholder={t('confirmNewPassword')}
                     className="rounded-xl bg-gray-50 border-none p-6"
                   />
                 </div>
@@ -169,12 +171,12 @@ export default function AccountPage() {
           ) : (
             <div className="animate-in fade-in slide-in-from-right-4">
               <h2 className="text-2xl font-black uppercase italic tracking-tighter mb-8">
-                Order History
+                {t('orderHistory')}
               </h2>
               <div className="space-y-4">
               {!orders || orders.length === 0 ? (
                   <p className="text-sm font-bold text-gray-400 uppercase">
-                    You have no orders yet.
+                    {t('noOrdersYet')}
                   </p>
                 ) : orders.map(order => (
                   <div key={order.id} className={cn(
@@ -188,7 +190,7 @@ export default function AccountPage() {
                         Order #{order.order_number}
                       </p>
                       <p className="text-sm font-bold">
-                        {order.items ? order.items.map(item => item.product?.name || "Unknown Product").join(", ") : "Unknown Product"}
+                        {order.items ? order.items.map(item => item.product?.name || t('unknownProduct')).join(", ") : t('unknownProduct')}
                       </p>
                       <OrderProgress order={order} />
                     </div>
@@ -206,7 +208,7 @@ export default function AccountPage() {
                         className="flex mt-2 items-center gap-2 text-gray-400 font-black hover:bg-gray-50 hover:text-primary transition-all"
                       >
                         <Printer size={16} className="text-gray-400 group-hover:text-primary" />
-                        <span className="font-black text-gray-600">Print Invoice</span>
+                        <span className="font-black text-gray-600">{t('printInvoice')}</span>
                       </Button>
                     </div>
                     <div className="w-full mt-4">
@@ -216,14 +218,14 @@ export default function AccountPage() {
                             <QRCodeSVG value={order.order_number} size={120} />
                           </div>
                           <div className="items-start text-left">
-                            <h4 className="text-sm font-black uppercase italic italic">Ready at {order.branch?.name}</h4>
+                            <h4 className="text-sm font-black uppercase italic">{t('readyAtBranch', { branchName: order.branch?.name ?? '' })}</h4>
                             <p className="text-[10px] opacity-80 mt-1 uppercase font-bold tracking-widest">
-                              Show this QR to our staff to claim your piece
+                              {t('showQRInstructions')}
                             </p>
                             
                             <div className="w-full mt-6 pt-6 border-t border-white/10 flex justify-between items-center">
                               <div className="text-left">
-                                  <p className="text-[8px] uppercase font-black opacity-60">Location</p>
+                              <p className="text-[8px] uppercase font-black opacity-60">{t('location')}</p>
                                   <p className="text-[10px] font-bold">{order.branch?.address}</p>
                               </div>
                               <button className="bg-white/10 p-2 rounded-lg">
@@ -237,9 +239,9 @@ export default function AccountPage() {
                         <div className="bg-gray-50 border border-gray-100 rounded-[2.5rem] p-8 animate-in fade-in slide-in-from-top-4">
                           <div className="flex justify-between items-start">
                             <div className="space-y-1">
-                              <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Shipment Details</p>
-                              <h4 className="text-lg font-black italic uppercase italic text-gray-900">
-                                {order.courier} Tracking
+                              <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{t('shipmentDetails')}</p>
+                              <h4 className="text-lg font-black uppercase italic text-gray-900">
+                                {t('trackingWithCourier', { courier: order.courier ?? '' })}
                               </h4>
                             </div>
                             <div className="bg-white p-2 rounded-xl shadow-sm">
@@ -249,15 +251,15 @@ export default function AccountPage() {
 
                           <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
-                              <p className="text-[9px] font-black uppercase text-gray-400">Courier Service</p>
+                              <p className="text-[9px] font-black uppercase text-gray-400">{t('courierService')}</p>
                               <p className="font-mono text-sm font-bold text-primary">
                                 {order.courier_service}
                               </p>
                             </div>
                             <div>
-                              <p className="text-[9px] font-black uppercase text-gray-400">Waybill Number</p>
+                              <p className="text-[9px] font-black uppercase text-gray-400">{t('waybillNumber')}</p>
                               <p className="font-mono text-sm font-bold text-primary">
-                                {order.tracking_number || "Awaiting Pickup..."}
+                                {order.tracking_number || t('awaitingPickup')}
                               </p>
                             </div>
 
@@ -267,14 +269,14 @@ export default function AccountPage() {
                                 target="_blank"
                                 className="bg-primary text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-secondary transition-all text-center"
                               >
-                                Track Package →
+                                {t('trackPackage')}
                               </a>
                             )}
                           </div>
                           
                           {!order.tracking_number && (
                             <p className="mt-4 text-[9px] font-bold text-gray-400 italic">
-                              * Tracking info will appear once our boutique team hands the package to {order.courier}.
+                              {t('trackingInfoNote', { courier: order.courier ?? '' })}
                             </p>
                           )}
                         </div>

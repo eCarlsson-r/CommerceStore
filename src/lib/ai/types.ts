@@ -18,8 +18,11 @@ export type RecommendationsRequest = AIRequestMeta & {
 
 export type RecommendationItem = {
   productId: number;
+  name: string;
   score: number;
   reason?: string;
+  imageUrl?: string;
+  price?: number;
 };
 
 export type RecommendationsResponse = {
@@ -72,6 +75,16 @@ export type TranslateDraftResponse = {
     requiresReview?: boolean;
     isEmpty?: boolean;
   };
+};
+
+export type EditImageRequest = AIRequestMeta & {
+  prompt: string;
+  baseImageBase64: string;
+  productImageBase64?: string;
+};
+
+export type EditImageResponse = {
+  image_base64: string;
 };
 
 export type AIKPIEvent =

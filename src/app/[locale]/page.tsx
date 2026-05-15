@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 
 export default function HomePage() {
   const t = useTranslations('product');
+  const tc = useTranslations('common');
   // We fetch these in parallel for speed
   const { data: banners, isLoading: bannersLoading } = useBanners();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
@@ -24,7 +25,7 @@ export default function HomePage() {
     return (
       <main className="space-y-12 py-8">
         <div className="container mx-auto px-4">
-          <div className="text-center">Loading...</div>
+          <div className="text-center">{tc('loading')}</div>
         </div>
       </main>
     );

@@ -5,6 +5,7 @@ import { Branch, CartItem, ProductCard } from "@/lib/types";
 import api from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { enqueueOfflineMutation } from "@/lib/offline/queue";
 
 // 2. Define the Context interface
@@ -20,6 +21,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("cart");
   const { user } = useAuth(); // Assume you have an Auth hook
   const [cart, setCart] = useState<CartItem[]>(() => {
     if (typeof window === "undefined") return [];
@@ -70,7 +72,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           type: "cart.add_item",
           payload,
         });
-        toast.info("Saved offline. Will sync once online.");
+        toast.info(t("savedOffline"));
         return;
       }
 
@@ -82,7 +84,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           type: "cart.add_item",
           payload,
         });
-        toast.warning("Unable to sync now. Queued for retry.");
+        toast.warning(t("syncQueued"));
       }
     }
   };
@@ -164,7 +166,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
       }
     }
-    toast.success("Item removed from bag");
+    toast.success(t("itemRemoved"));
   };
 
   const clearCart = () => {

@@ -7,6 +7,7 @@ import type {
   RecommendationsRequest,
   TranslateDraftRequest,
   VisualSearchRequest,
+  EditImageRequest
 } from "@/lib/ai/types";
 
 export function useRecommendations() {
@@ -31,5 +32,12 @@ export function useAssistant() {
 export function useTranslateDraft() {
   return useMutation({
     mutationFn: (payload: TranslateDraftRequest) => aiClient.translateDraft(payload),
+  });
+}
+
+export function useEditImage() {
+  return useMutation({
+    mutationFn: (payload: EditImageRequest) =>
+      aiClient.editImage(payload),
   });
 }

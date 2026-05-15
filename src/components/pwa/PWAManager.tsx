@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "@/lib/api";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
 function urlBase64ToUint8Array(base64String: string) {
@@ -72,8 +71,7 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
 
   async function subscribe() {
     if (!user) {
-      toast.error("You must be logged in to subscribe");
-      return;
+      throw new Error('User not authenticated');
     }
 
     try {
@@ -103,11 +101,9 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
         auth_token: authToken,
         content_encoding: "aes128gcm",
       });
-
-      toast.success("Push notifications enabled");
     } catch (error) {
       console.error("Failed to subscribe to push:", error);
-      toast.error("Failed to enable push notifications");
+      throw error;
     }
   }
 

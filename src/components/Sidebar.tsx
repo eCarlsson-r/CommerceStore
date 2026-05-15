@@ -82,7 +82,7 @@ export default function Sidebar({
 
       <div>
         <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-6">
-          Collections
+          {t('collections')}
         </h3>
         <ul className="space-y-3">
           <li
@@ -94,7 +94,7 @@ export default function Sidebar({
                 : "font-medium text-gray-500 hover:text-gray-900",
             )}
           >
-            <span>All Products</span>
+            <span>{t('allProducts')}</span>
             {activeCategory === "" && (
               <div className="w-1.5 h-1.5 bg-primary rounded-full" />
             )}

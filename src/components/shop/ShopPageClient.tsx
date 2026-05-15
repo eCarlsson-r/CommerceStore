@@ -18,11 +18,12 @@ export function ShopPageClient({
   initialProducts,
   categoryName,
 }: Props) {
+  const [visualProducts, setVisualProducts] = useState<ProductCard[] | null>(null);
   const [hasVisualSearch, setHasVisualSearch] = useState(false);
 
   const handleVisualSearchResults = useCallback(
     (products: ProductCard[], isActive: boolean) => {
-      setHasVisualSearch(isActive);
+      setVisualProducts(products.length ? products : null);
       setHasVisualSearch(isActive);
     },
     []
@@ -48,7 +49,10 @@ export function ShopPageClient({
           )}
         </header>
 
-        <ShopResultsClient initialProducts={initialProducts} />
+        <ShopResultsClient
+          initialProducts={initialProducts}
+          visualProducts={visualProducts}
+        />
       </main>
     </div>
   );

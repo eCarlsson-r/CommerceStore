@@ -1,6 +1,5 @@
 import { getProducts, getCategories } from "@/lib/data-fetchers";
-import Sidebar from "@/components/Sidebar";
-import { ShopResultsClient } from "@/components/shop/ShopResultsClient";
+import { ShopPageClient } from "@/components/shop/ShopPageClient";
 
 export default async function ShopPage({
   searchParams,
@@ -8,7 +7,8 @@ export default async function ShopPage({
   searchParams: Promise<{ category?: string; max_price?: string }>;
 }) {
   // searchParams automatically contains { category: 'rings', max_price: '5000000' }
-  const products = await getProducts(await searchParams);
+  const sparams = await searchParams;
+  const products = await getProducts(sparams);
   const categories = await getCategories();
 
   const priceBounds = {
@@ -17,18 +17,11 @@ export default async function ShopPage({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-10 my-10">
-      <Sidebar categories={categories} priceBounds={priceBounds} />
-
-      <main className="flex-1">
-        <header className="mb-10">
-          <h1 className="text-3xl font-black uppercase italic tracking-tighter">
-            {(await searchParams).category || "Our Collection"}
-          </h1>
-        </header>
-
-        <ShopResultsClient initialProducts={products.products} />
-      </main>
-    </div>
+    <ShopPageClient
+      categories={categories}
+      priceBounds={priceBounds}
+      initialProducts={products.products}
+      categoryName={sparams.category || "Our Collection"}
+    />
   );
 }

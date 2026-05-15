@@ -70,7 +70,7 @@ export function VisualSearchBar({
       <h2 className="text-xs font-black uppercase tracking-widest text-gray-600 mb-2">
         {t('visualSearch')}
       </h2>
-      <div className="flex flex-col md:flex-row gap-3">
+      <div className="flex flex-row md:flex-col gap-3">
         <input
           type="url"
           value={imageUrl}

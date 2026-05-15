@@ -1,5 +1,6 @@
 "use client";
-
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAssistant, useRecommendations } from "@/hooks/useAI";
@@ -45,14 +46,42 @@ export function ProductAIInsights({ productId, productName }: Props) {
           </p>
         )}
         {!!recommendations.data?.items.length && (
-          <ul className="space-y-1 text-sm">
-            {recommendations.data.items.map((item) => (
-              <li key={item.productId} className="flex justify-between">
-                <span>Product #{item.productId}</span>
-                <span className="text-gray-500">{item.score.toFixed(2)}</span>
-              </li>
+          <div className="grid grid-cols-4 gap-3 mt-3">
+            {recommendations.data.items.filter((item) => item.productId !== productId).map((item) => (
+              <Link href={`/product/${item.productId}`} key={item.productId} className="flex flex-col gap-2 rounded-xl border border-gray-100 p-2 bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <div className="aspect-square w-full rounded-lg bg-gray-100 overflow-hidden relative">
+                  <Image
+                    src={
+                      item.imageUrl
+                        ? item.imageUrl.startsWith("http")
+                            ? item.imageUrl
+                            : process.env.NEXT_PUBLIC_API_URL + item.imageUrl
+                        : `https://placehold.co/200x200/f1f5f9/64748b?text=${encodeURIComponent(item.name || 'Product')}`
+                    }
+                    alt={item.name || `Product #${item.productId}`}
+                    width={200}
+                    height={200}
+                    className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md text-primary text-[9px] px-1.5 py-0.5 rounded-full font-black border border-primary/10 shadow-sm">
+                    {t('matchScore', { match: (item.score * 100).toFixed(0) })}
+                  </div>
+                </div>
+                <div className="px-1 pb-1">
+                  <h4 className="text-xs font-bold text-gray-800 line-clamp-1">{item.name || `Product #${item.productId}`}</h4>
+                  <p className="text-xs text-primary font-black mt-0.5">
+                    {item.price !== undefined && item.price !== null
+                      ? Number(item.price).toLocaleString("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                        minimumFractionDigits: 0
+                      })
+                      : "N/A"}
+                  </p>
+                </div>
+              </Link>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 
