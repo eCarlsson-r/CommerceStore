@@ -26,7 +26,8 @@ export default function OrderSuccessPage() {
             {isPickup ? t('orderReserved') : t('shipmentInitialized')}
           </h1>
           <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">
-            {t('invoiceNumber', { id })}
+            {t('invoiceNumber', { id : order.order_number })}
+          </p>
           {isPickup ? (
             <>
               <div className="p-4 rounded-3xl mb-6">
@@ -45,7 +46,6 @@ export default function OrderSuccessPage() {
               <p className="text-xs text-gray-400 mt-2">{t('trackingWillBeSent')}</p>
             </>
           )}
-        </div>
 
         <div className="bg-gray-900 text-white rounded-[3rem] p-10 space-y-8">
           <div>
