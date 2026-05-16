@@ -21,6 +21,8 @@
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
     "back": "Back",
     "priceRange": "Price Range",
     "resetPrice": "Reset Price",
