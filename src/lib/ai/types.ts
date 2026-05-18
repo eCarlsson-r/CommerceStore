@@ -46,6 +46,10 @@ export type VisualSearchResponse = {
 export type AssistantRequest = AIRequestMeta & {
   message: string;
   context?: Record<string, unknown>;
+  history?: Array<{
+    role: "user" | "model";
+    text: string;
+  }>;
 };
 
 export type AssistantResponse = {
