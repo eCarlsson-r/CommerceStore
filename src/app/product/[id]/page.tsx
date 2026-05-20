@@ -140,7 +140,7 @@ export default function ProductPage() {
           </p>
 
           <WallpaperPreviewPanel productId={product.id} />
-          <ProductAIInsights productId={product.id} productName={product.name} />
+          <ProductAIInsights productId={product.id} />
 
           {/* Footer of PDP: Authenticity Guarantee */}
           <div className="pt-8 border-t border-gray-100 flex gap-6">
